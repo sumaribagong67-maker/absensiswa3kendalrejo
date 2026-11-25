@@ -1,0 +1,3243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SiPresensi - SDN 3 Kendalrejo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --primary: #1b5e20;
+      --primary-dark: #0f3d13;
+      --primary-light: #2e7d32;
+      --accent: #4caf50;
+      --accent-soft: #e8f5e9;
+      --surface: #ffffff;
+      --background: #f4f7f5;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --success: #16a34a;
+      --warning: #eab308;
+      --info: #0284c7;
+      --danger: #dc2626;
+      --radius: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+
+    /* Container */
+    .app-container {
+      max-width: 1040px;
+      margin: 0 auto;
+      background: var(--surface);
+      box-shadow: var(--shadow-lg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 15px;
+      margin-bottom: 30px;
+    }
+
+    /* Header Banner */
+    .header-banner {
+      background: linear-gradient(135deg, #0d3810 0%, #1b5e20 50%, #2e7d32 100%);
+      color: #ffffff;
+      padding: 24px 28px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 4px solid #facc15;
+    }
+
+    .school-identity {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      z-index: 2;
+    }
+
+    .school-logo-wrap {
+      width: 72px;
+      height: 72px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      border: 3px solid #facc15;
+      flex-shrink: 0;
+    }
+
+    .school-logo-wrap svg {
+      width: 44px;
+      height: 44px;
+      fill: #1b5e20;
+    }
+
+    .school-title-text h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      line-height: 1.2;
+      color: #ffffff;
+    }
+
+    .school-title-text p {
+      font-size: 0.95rem;
+      opacity: 0.92;
+      margin-top: 3px;
+    }
+
+    .school-motto-badge {
+      font-style: italic;
+      color: #fef08a;
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-top: 5px;
+      display: inline-block;
+    }
+
+    /* Tab Navigasi */
+    .nav-tabs {
+      display: flex;
+      background: #ffffff;
+      border-bottom: 2px solid #e2e8f0;
+      padding: 8px 16px 0 16px;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .nav-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--primary);
+      background: var(--accent-soft);
+    }
+
+    .nav-tab-btn.active {
+      color: #ffffff;
+      background: var(--primary);
+      border-bottom: 3px solid #facc15;
+    }
+
+    .nav-tab-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Konten Halaman */
+    .page-content {
+      padding: 24px 28px;
+    }
+
+    /* Form Filter Grid */
+    .filter-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-group label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-group label svg {
+      width: 16px;
+      height: 16px;
+      color: var(--primary-light);
+    }
+
+    .form-control {
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+    }
+
+    .input-with-button {
+      display: flex;
+      gap: 8px;
+    }
+
+    .input-with-button input {
+      flex: 1;
+    }
+
+    /* Tombol Aksi */
+    .action-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .btn-group-left, .btn-group-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 5px rgba(27, 94, 32, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+
+    .btn-secondary:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .btn-accent {
+      background: #eab308;
+      color: #713f12;
+      font-weight: 700;
+    }
+
+    .btn-accent:hover {
+      background: #ca8a04;
+      color: #ffffff;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-success:hover {
+      background: #15803d;
+    }
+
+    .btn-info {
+      background: var(--info);
+      color: #ffffff;
+    }
+
+    .btn-info:hover {
+      background: #0369a1;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 16px;
+      backdrop-filter: blur(2px);
+    }
+    .modal-card {
+      background: #ffffff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      max-width: 500px;
+      width: 100%;
+      overflow: hidden;
+      animation: modalFadeIn 0.25s ease;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .modal-header {
+      background: var(--primary);
+      color: #ffffff;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .modal-footer {
+      padding: 14px 20px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .action-btn-sm {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .btn-edit {
+      background: #e0f2fe;
+      color: #0369a1;
+      border-color: #bae6fd;
+    }
+    .btn-edit:hover {
+      background: #bae6fd;
+    }
+    .btn-delete {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+    .btn-delete:hover {
+      background: #fecaca;
+    }
+
+    /* Info Bar */
+    .info-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 20px;
+    }
+
+    .info-bar svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: var(--primary);
+    }
+
+    /* Container Lembar Laporan / Cetak */
+    .report-paper {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 30px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    /* Kop Surat */
+    .kop-surat {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 14px;
+      border-bottom: 3px double #1b5e20;
+      margin-bottom: 20px;
+    }
+
+    .kop-logo {
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .kop-logo svg {
+      width: 72px;
+      height: 72px;
+      fill: #1b5e20;
+    }
+
+    .kop-teks {
+      flex: 1;
+      text-align: center;
+    }
+
+    .kop-teks h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.25;
+      letter-spacing: 0.5px;
+    }
+
+    .kop-teks h2 {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #0f3d13;
+      margin: 2px 0;
+      letter-spacing: 0.8px;
+    }
+
+    .kop-teks p {
+      font-size: 0.86rem;
+      color: #475569;
+    }
+
+    /* Judul Laporan */
+    .report-title-box {
+      background: #1b5e20;
+      color: #ffffff;
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 18px;
+    }
+
+    .report-title-box h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .report-title-box p {
+      font-size: 0.9rem;
+      opacity: 0.95;
+    }
+
+    /* Meta Laporan */
+    .report-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px 24px;
+      margin-bottom: 16px;
+      font-size: 0.92rem;
+    }
+
+    .report-meta-row {
+      display: flex;
+    }
+
+    .report-meta-label {
+      width: 90px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .report-meta-val {
+      flex: 1;
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    /* Tabel Presensi Presisi */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+    }
+
+    table.attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    table.attendance-table th {
+      background: #1b5e20;
+      color: #ffffff;
+      padding: 10px 8px;
+      text-align: center;
+      font-weight: 700;
+      border: 1px solid #144a18;
+      white-space: nowrap;
+    }
+
+    table.attendance-table td {
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+      vertical-align: middle;
+      color: #1e293b;
+    }
+
+    table.attendance-table tbody tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    table.attendance-table tbody tr:hover {
+      background: #f1f8f3;
+    }
+
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+
+    /* Radio button status presensi */
+    .status-check-cell {
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .badge-hadir { background: #dcfce7; color: #15803d; }
+    .badge-sakit { background: #fef9c3; color: #a16207; }
+    .badge-izin { background: #e0f2fe; color: #0369a1; }
+    .badge-alpha { background: #fee2e2; color: #b91c1c; }
+
+    .check-mark-icon {
+      color: #16a34a;
+      font-weight: 900;
+      font-size: 1.15rem;
+    }
+
+    .dash-mark {
+      color: #94a3b8;
+    }
+
+    /* Bottom Summary & Signature */
+    .summary-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 18px;
+    }
+
+    .summary-box h4 {
+      font-size: 0.95rem;
+      color: #166534;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .summary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.88rem;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed #dcfce7;
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Format Tanda Tangan Resmi 2 Kolom */
+    .signature-dual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 28px;
+      page-break-inside: avoid;
+    }
+
+    .sig-col {
+      text-align: center;
+      padding: 6px;
+    }
+
+    .sig-role {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f172a;
+      line-height: 1.4;
+      margin-bottom: 60px;
+    }
+
+    .sig-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+      text-decoration: underline;
+    }
+
+    .sig-nip {
+      font-size: 0.88rem;
+      color: #475569;
+      margin-top: 2px;
+    }
+
+    /* Footer Slogan */
+    .app-footer {
+      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+      color: #ffffff;
+      text-align: center;
+      padding: 18px 20px;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 14px 22px;
+      background: #1e293b;
+      color: #ffffff;
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: none;
+      z-index: 9999;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* PRINT STYLING */
+    @media print {
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .app-container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
+
+      .header-banner,
+      .nav-tabs,
+      .filter-card,
+      .action-toolbar,
+      .info-bar,
+      .app-footer,
+      .toast-msg,
+      .modal-overlay,
+      .non-printable {
+        display: none !important;
+      }
+
+      #sectionHarian,
+      #sectionBulanan,
+      #sectionSiswa {
+        display: none !important;
+      }
+
+      #sectionCetak {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .page-content {
+        padding: 0 !important;
+      }
+
+      .report-paper {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: block !important;
+      }
+
+      .report-title-box {
+        background: #f1f5f9 !important;
+        color: #000000 !important;
+        border: 1px solid #000000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      table.attendance-table th {
+        background: #e2e8f0 !important;
+        color: #000000 !important;
+        border: 1px solid #000000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      table.attendance-table td {
+        border: 1px solid #000000 !important;
+        color: #000000 !important;
+      }
+
+      .summary-box {
+        border: 1px solid #000000 !important;
+        background: #ffffff !important;
+      }
+
+      .summary-item {
+        border-bottom: 1px dashed #000000 !important;
+      }
+
+      .signature-dual-grid {
+        page-break-inside: avoid !important;
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .header-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+
+      .school-identity {
+        flex-direction: column;
+      }
+
+      .action-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-group-left, .btn-group-right {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Header Banner -->
+  <header class="header-banner">
+    <div class="school-identity">
+      <div class="school-logo-wrap">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 19.94 8.13 22 12 22C15.87 22 19 19.94 19 17.18V13.18L12 17L5 13.18Z" />
+        </svg>
+      </div>
+      <div class="school-title-text">
+        <h1 id="headerNamaSekolah">SDN 3 KENDALREJO</h1>
+        <p id="headerSubJudul">Kecamatan Tegaldlimo - Banyuwangi</p>
+        <span class="school-motto-badge" id="headerSlogan">"Berkarakter Unggul dan Inovatif"</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Nav Tabs -->
+  <nav class="nav-tabs non-printable">
+    <button class="nav-tab-btn active" id="tabBtnHarian" onclick="switchTab('harian')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5z"/></svg>
+      Presensi Harian
+    </button>
+    <button class="nav-tab-btn" id="tabBtnBulanan" onclick="switchTab('bulanan')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H7v-7h3v7zm4 0h-3v-4h3v4zm3 0h-3V7h3v10z"/></svg>
+      Rekap Bulanan
+    </button>
+    <button class="nav-tab-btn" id="tabBtnCetak" onclick="switchTab('cetak')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+      Cetak Presensi
+    </button>
+    <button class="nav-tab-btn" id="tabBtnSiswa" onclick="switchTab('siswa')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      Kelola Siswa & Kelas
+    </button>
+  </nav>
+
+  <!-- Konten Tab 1: Presensi Harian -->
+  <main class="page-content" id="sectionHarian">
+    <div class="filter-card non-printable">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+            Tanggal
+          </label>
+          <input type="date" id="inputTanggal" class="form-control" onchange="onFilterChange()">
+        </div>
+
+        <div class="filter-group">
+          <label>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
+            Bulan
+          </label>
+          <select id="selectBulan" class="form-control" onchange="onMonthSelectChange()">
+            <option value="2026-11" selected>November 2026</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            Kelas
+          </label>
+          <select id="selectKelas" class="form-control" onchange="onClassChange()">
+            <option value="Kelas 1">Kelas 1</option>
+            <option value="Kelas 2">Kelas 2</option>
+            <option value="Kelas 3">Kelas 3</option>
+            <option value="Kelas 4">Kelas 4</option>
+            <option value="Kelas 5" selected>Kelas 5</option>
+            <option value="Kelas 6">Kelas 6</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+            Materi / Kegiatan
+          </label>
+          <input type="text" id="inputMateri" class="form-control" placeholder="Contoh: Gerak Dasar Atletik (Lari Sprint)" value="Gerak Dasar Atletik (Lari Sprint)" oninput="updateReportMeta()">
+        </div>
+
+        <div class="filter-group">
+          <label>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            Waktu / Jam Pembelajaran
+          </label>
+          <input type="text" id="inputWaktu" class="form-control" placeholder="Contoh: 07.00 – 08.30 WIB" value="07.00 – 08.30 WIB" oninput="updateReportMeta()">
+          <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px;">
+            <button type="button" class="action-btn-sm btn-edit" style="font-size: 0.72rem; padding: 2px 6px;" onclick="setPresetWaktu('07.00 – 08.10 WIB')">Jam 1-2 (07.00-08.10)</button>
+            <button type="button" class="action-btn-sm btn-edit" style="font-size: 0.72rem; padding: 2px 6px;" onclick="setPresetWaktu('08.30 – 10.00 WIB')">Jam 3-4 (08.30-10.00)</button>
+            <button type="button" class="action-btn-sm btn-edit" style="font-size: 0.72rem; padding: 2px 6px;" onclick="setPresetWaktu('10.15 – 11.35 WIB')">Jam 5-6 (10.15-11.35)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group" style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <label style="margin-bottom: 0;">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+            Dokumentasi Foto Kegiatan Guru
+          </label>
+          <span id="uploadStatusText" style="font-size: 0.8rem; font-weight: 600; color: #16a34a; display: none;"></span>
+        </div>
+        
+        <div class="input-with-button" style="flex-wrap: wrap;">
+          <input type="text" id="inputUrlDoc" class="form-control" placeholder="Link Google Drive foto kegiatan..." value="" style="min-width: 220px; flex: 1;">
+          <input type="file" id="fileFotoKegiatan" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this)">
+          <button type="button" class="btn btn-primary" onclick="triggerPhotoUpload()" id="btnUploadFoto">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+            Unggah / Ambil Foto
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="openDocUrl()">Lihat Foto</button>
+        </div>
+
+        <!-- Thumbnail Pratinjau Foto -->
+        <div id="previewFotoContainer" style="display: none; align-items: center; gap: 12px; margin-top: 10px; padding: 10px; background: #ffffff; border: 1.5px dashed #86efac; border-radius: 8px;">
+          <img id="previewFotoImg" src="" alt="Foto Kegiatan" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="flex: 1;">
+            <div style="font-size: 0.88rem; font-weight: 700; color: #1e293b;" id="previewFotoName">Foto Kegiatan Terpilih</div>
+            <div style="font-size: 0.8rem; color: #16a34a;" id="previewFotoSize">Siap disimpan & dicetak</div>
+          </div>
+          <button type="button" class="action-btn-sm btn-delete" onclick="removeSelectedPhoto()">Hapus</button>
+        </div>
+      </div>
+
+      <!-- Action Toolbar -->
+      <div class="action-toolbar">
+        <div class="btn-group-left">
+          <button type="button" class="btn btn-primary" onclick="cetakLaporanHarianDariTab1()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Cetak Laporan Ini
+          </button>
+          <button type="button" class="btn btn-accent" onclick="markAllPresent()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+            Tandai Hadir Semua
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="resetForm()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            Reset Form
+          </button>
+        </div>
+        <div class="btn-group-right">
+          <button type="button" class="btn btn-success" onclick="saveAttendanceData()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            Simpan Presensi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Bar -->
+    <div class="info-bar non-printable">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+      <span><strong>Info Guru:</strong> Anda dapat mencentang Hadir/Sakit/Izin/Alpha langsung pada baris siswa di bawah, lalu klik <strong>Simpan Presensi</strong> untuk mencatat riwayat ke Google Spreadsheet.</span>
+    </div>
+
+    <!-- Form Input Absensi Siswa Harian -->
+    <div class="filter-card non-printable" style="margin-top: 16px; padding: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <h3 style="font-size: 1.15rem; color: #1b5e20; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H7v-7h3v7zm4 0h-3v-4h3v4zm3 0h-3V7h3v10z"/></svg>
+            Daftar Kehadiran Siswa
+          </h3>
+          <span style="font-size: 0.85rem; color: #64748b;" id="dailyCardMetaSubtitle">Kelas: - | Tanggal: - | Jam: -</span>
+        </div>
+        <button type="button" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="cetakLaporanHarianDariTab1()">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width: 16px; height: 16px; margin-right: 6px;"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          Pratinjau & Cetak Laporan
+        </button>
+      </div>
+
+      <!-- Tabel Siswa Input Harian -->
+      <div class="table-wrap">
+        <table class="attendance-table" id="tablePresensi">
+          <thead>
+            <tr>
+              <th style="width: 45px;">No</th>
+              <th>Nama Siswa</th>
+              <th style="width: 50px;">L/P</th>
+              <th style="width: 65px;">Hadir</th>
+              <th style="width: 65px;">Sakit</th>
+              <th style="width: 65px;">Izin</th>
+              <th style="width: 65px;">Alpha</th>
+              <th style="min-width: 140px;">Keterangan</th>
+            </tr>
+          </thead>
+          <tbody id="tableBodyPresensi"></tbody>
+        </table>
+      </div>
+
+      <!-- Rekap Kehadiran Hari Ini -->
+      <div class="summary-box" style="margin-top: 16px;">
+        <h4>
+          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H7v-7h3v7zm4 0h-3v-4h3v4zm3 0h-3V7h3v10z"/></svg>
+          Rekap Kehadiran Sesi Ini
+        </h4>
+        <div class="summary-list">
+          <div class="summary-item">
+            <span>Jumlah Siswa</span>
+            <strong id="sumTotalSiswa">: 0 Orang</strong>
+          </div>
+          <div class="summary-item">
+            <span>Hadir</span>
+            <strong id="sumHadir">: 0 Orang (0%)</strong>
+          </div>
+          <div class="summary-item">
+            <span>Sakit</span>
+            <strong id="sumSakit">: 0 Orang</strong>
+          </div>
+          <div class="summary-item">
+            <span>Izin</span>
+            <strong id="sumIzin">: 0 Orang</strong>
+          </div>
+          <div class="summary-item">
+            <span>Alpha</span>
+            <strong id="sumAlpha">: 0 Orang</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Konten Tab 2: Rekap Bulanan -->
+  <main class="page-content" id="sectionBulanan" style="display: none;">
+    <div class="filter-card non-printable">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>Pilih Bulan</label>
+          <input type="month" id="rekapFilterBulan" class="form-control" value="2026-11" onchange="loadMonthlyRecap()">
+        </div>
+        <div class="filter-group">
+          <label>Pilih Kelas</label>
+          <select id="rekapFilterKelas" class="form-control" onchange="loadMonthlyRecap()">
+            <option value="Kelas 1">Kelas 1</option>
+            <option value="Kelas 2">Kelas 2</option>
+            <option value="Kelas 3">Kelas 3</option>
+            <option value="Kelas 4">Kelas 4</option>
+            <option value="Kelas 5" selected>Kelas 5</option>
+            <option value="Kelas 6">Kelas 6</option>
+          </select>
+        </div>
+        <div class="filter-group" style="justify-content: flex-end;">
+          <label>&nbsp;</label>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary" onclick="exportMonthlyToExcel()">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              Ekspor Excel (.xlsx)
+            </button>
+            <button class="btn btn-secondary" onclick="cetakRekapBulananDariTab2()">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+              Pratinjau & Cetak Rekap
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lembar Rekap Bulanan -->
+    <div class="report-paper">
+      <div class="kop-surat">
+        <div class="kop-logo">
+          <svg viewBox="0 0 24 24"><path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 19.94 8.13 22 12 22C15.87 22 19 19.94 19 17.18V13.18L12 17L5 13.18Z" /></svg>
+        </div>
+        <div class="kop-teks">
+          <h3 id="kopInstansi">PEMERINTAH KABUPATEN BANYUWANGI<br>DINAS PENDIDIKAN DAN KEBUDAYAAN</h3>
+          <h2 id="kopSekolah">SD NEGERI 3 KENDALREJO</h2>
+          <p id="kopAlamat">Jl. Paluagung No. 10 Kec. Tegaldlimo - Banyuwangi</p>
+        </div>
+      </div>
+
+      <div class="report-title-box">
+        <h3>REKAPITULASI PRESENSI BULANAN</h3>
+        <p id="labelBulanRekap">Periode: November 2026 - Kelas 5</p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="attendance-table" id="tableRekapBulanan">
+          <thead>
+            <tr>
+              <th style="width: 45px;">No</th>
+              <th>Nama Siswa</th>
+              <th style="width: 50px;">L/P</th>
+              <th style="width: 60px;">Hadir</th>
+              <th style="width: 60px;">Sakit</th>
+              <th style="width: 60px;">Izin</th>
+              <th style="width: 60px;">Alpha</th>
+              <th style="width: 100px;">% Kehadiran</th>
+            </tr>
+          </thead>
+          <tbody id="tableBodyRekap"></tbody>
+        </table>
+      </div>
+
+      <!-- Jurnal & Materi Pembelajaran Bulan Ini -->
+      <div style="margin-top: 24px;">
+        <h4 style="font-size: 0.98rem; font-weight: 700; color: #1b5e20; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+          Jurnal & Agenda Materi Pembelajaran Bulan Ini
+        </h4>
+        <div class="table-wrap">
+          <table class="attendance-table" id="tableJurnalMateri">
+            <thead>
+              <tr>
+                <th style="width: 45px;">No</th>
+                <th style="width: 140px;">Tanggal</th>
+                <th>Materi / Kegiatan Pembelajaran</th>
+                <th style="width: 130px;">Dokumentasi</th>
+              </tr>
+            </thead>
+            <tbody id="tableBodyJurnalMateri">
+              <tr><td colspan="4" class="text-center" style="padding: 14px; color: #94a3b8;">Belum ada catatan materi pembelajaran pada bulan ini.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Ringkasan Akumulasi Total Sebulan -->
+      <div class="summary-box">
+        <h4>Total Akumulasi Kehadiran Sebulan</h4>
+        <div class="summary-list" id="rekapAkumulasiList"></div>
+      </div>
+
+      <!-- Tanda Tangan 2 Sisi -->
+      <div class="signature-dual-grid">
+        <div class="sig-col">
+          <div class="sig-role">
+            Mengetahui,<br>
+            <span id="sigKepsekRoleRecap">Kepala SD Negeri 3 Kendalrejo</span>
+          </div>
+          <div class="sig-name" id="sigKepsekNameRecap">SRI WAHYUNI, S.Pd.SD</div>
+          <div class="sig-nip" id="sigKepsekNipRecap">NIP. 198110222014072005</div>
+        </div>
+
+        <div class="sig-col">
+          <div class="sig-role">
+            <span id="sigDateRecap">Kendalrejo, 30 November 2026</span><br>
+            <span id="sigRoleRecap">Guru PJOK</span>
+          </div>
+          <div class="sig-name" id="sigNameRecap">ANDRI ARDI WILANDRA, S.Pd</div>
+          <div class="sig-nip" id="sigNipRecap">NIP. 199112282022211014</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Konten Tab 3: Pusat Cetak & Unduh Dokumen Resmi -->
+  <main class="page-content" id="sectionCetak" style="display: none;">
+    <div class="filter-card non-printable" style="margin-bottom: 20px;">
+      <div style="margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+        <h3 style="font-size: 1.15rem; color: #1b5e20; font-weight: 700; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width: 22px; height: 22px;"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          Pusat Cetak & Unduh Dokumen Resmi
+        </h3>
+        <p style="font-size: 0.88rem; color: #64748b; margin: 0;">Pilih jenis dokumen, kelas, dan periode waktu yang ingin Anda cetak atau unduh:</p>
+      </div>
+
+      <div class="filter-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="filter-group">
+          <label>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            Pilih Jenis Laporan
+          </label>
+          <select id="cetakJenisLaporan" class="form-control" onchange="onCetakFilterChange()">
+            <option value="HARIAN">1. Laporan Presensi Harian</option>
+            <option value="BULANAN">2. Rekapitulasi Presensi Bulanan</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            Pilih Kelas
+          </label>
+          <select id="cetakFilterKelas" class="form-control" onchange="onCetakFilterChange()">
+            <option value="Kelas 1">Kelas 1</option>
+            <option value="Kelas 2">Kelas 2</option>
+            <option value="Kelas 3">Kelas 3</option>
+            <option value="Kelas 4">Kelas 4</option>
+            <option value="Kelas 5" selected>Kelas 5</option>
+            <option value="Kelas 6">Kelas 6</option>
+          </select>
+        </div>
+
+        <div class="filter-group" id="cetakGroupTanggal">
+          <label>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+            Pilih Tanggal Presensi
+          </label>
+          <input type="date" id="cetakFilterTanggal" class="form-control" onchange="onCetakFilterChange()">
+        </div>
+
+        <div class="filter-group" id="cetakGroupBulan" style="display: none;">
+          <label>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
+            Pilih Bulan Rekapitulasi
+          </label>
+          <input type="month" id="cetakFilterBulan" class="form-control" onchange="onCetakFilterChange()">
+        </div>
+      </div>
+
+      <!-- Tombol Aksi Cetak & Ekspor -->
+      <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; justify-content: flex-end;">
+        <button type="button" class="btn btn-primary" id="btnCetakPdf" onclick="downloadPDFDirect()" style="background: #1b5e20;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Unduh File PDF (HP & PC)
+        </button>
+        <button type="button" class="btn btn-accent" id="btnCetakPrinter" onclick="printActiveReport()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          Cetak Printer Fisik
+        </button>
+        <button type="button" class="btn btn-info" id="btnCetakWord" onclick="exportActiveToWord()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 9V3.5L18.5 9H13z"/></svg>
+          Unduh Word (.doc)
+        </button>
+        <button type="button" class="btn btn-success" id="btnCetakExcel" onclick="exportActiveToExcel()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Unduh Excel (.xlsx)
+        </button>
+      </div>
+    </div>
+
+    <!-- Pratinjau Lembar Cetak Resmi -->
+    <div class="report-paper" id="cetakPreviewPaper">
+      <div class="kop-surat">
+        <div class="kop-logo">
+          <svg viewBox="0 0 24 24"><path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18C5 19.94 8.13 22 12 22C15.87 22 19 19.94 19 17.18V13.18L12 17L5 13.18Z" /></svg>
+        </div>
+        <div class="kop-teks">
+          <h3 id="cetakKopInstansi">PEMERINTAH KABUPATEN BANYUWANGI<br>DINAS PENDIDIKAN DAN KEBUDAYAAN</h3>
+          <h2 id="cetakKopSekolah">SD NEGERI 3 KENDALREJO</h2>
+          <p id="cetakKopAlamat">Jl. Paluagung No. 10 Kec. Tegaldlimo - Banyuwangi</p>
+        </div>
+      </div>
+
+      <div class="report-title-box">
+        <h3 id="cetakJudulLaporan">LAPORAN PRESENSI HARIAN</h3>
+        <p id="cetakSubJudulLaporan">Tanggal : -</p>
+      </div>
+
+      <div class="report-meta-grid" id="cetakMetaGridHarian">
+        <div class="report-meta-row">
+          <div class="report-meta-label">Kelas</div>
+          <div class="report-meta-val" id="cetakMetaKelas">: -</div>
+        </div>
+        <div class="report-meta-row">
+          <div class="report-meta-label">Materi</div>
+          <div class="report-meta-val" id="cetakMetaMateri">: -</div>
+        </div>
+        <div class="report-meta-row">
+          <div class="report-meta-label">Waktu</div>
+          <div class="report-meta-val" id="cetakMetaWaktu">: -</div>
+        </div>
+      </div>
+
+      <div class="table-wrap" id="cetakTableContainer"></div>
+
+      <div id="cetakFotoBox" style="display: none; margin: 16px 0; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; background: #fafafa;">
+        <div style="font-size: 0.82rem; font-weight: 700; color: #1b5e20; margin-bottom: 8px; letter-spacing: 0.5px;">DOKUMENTASI KEGIATAN PEMBELAJARAN</div>
+        <img id="cetakFotoImg" src="" alt="Dokumentasi Kegiatan" style="max-height: 220px; max-width: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">
+      </div>
+
+      <div class="summary-box" id="cetakSummaryBox">
+        <h4 id="cetakSummaryTitle">
+          <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H7v-7h3v7zm4 0h-3v-4h3v4zm3 0h-3V7h3v10z"/></svg>
+          <span id="cetakSummaryHeading">Rekap Kehadiran Hari Ini</span>
+        </h4>
+        <div class="summary-list" id="cetakSummaryList"></div>
+      </div>
+
+      <div id="cetakJurnalContainer" style="display: none; margin-top: 18px;"></div>
+
+      <div class="signature-dual-grid" style="margin-top: 24px;">
+        <div class="sig-col">
+          <div class="sig-role">
+            Mengetahui,<br>
+            <span id="cetakSigKepsekRole">Kepala SD Negeri 3 Kendalrejo</span>
+          </div>
+          <div class="sig-name" id="cetakSigKepsekName">SRI WAHYUNI, S.Pd.SD</div>
+          <div class="sig-nip" id="cetakSigKepsekNip">NIP. 198110222014072005</div>
+        </div>
+
+        <div class="sig-col">
+          <div class="sig-role">
+            <span id="cetakSigDate">Kendalrejo, 20 November 2026</span><br>
+            <span id="cetakSigRole">Guru PJOK</span>
+          </div>
+          <div class="sig-name" id="cetakSigName">ANDRI ARDI WILANDRA, S.Pd</div>
+          <div class="sig-nip" id="cetakSigNip">NIP. 199112282022211014</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Konten Tab 4: Kelola Siswa & Kelas -->
+  <main class="page-content" id="sectionSiswa" style="display: none;">
+    <div class="filter-card non-printable">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div>
+          <h3 style="font-size: 1.15rem; color: #1e293b; font-weight: 700;">Manajemen Data Siswa & Rombel Kelas</h3>
+          <p style="font-size: 0.88rem; color: #64748b;">Tambah siswa baru, perbaiki ejaan nama, ubah kelas, atau nonaktifkan siswa.</p>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="openAddStudentModal()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          + Tambah Siswa Baru
+        </button>
+      </div>
+
+      <div class="filter-grid" style="margin-bottom: 0;">
+        <div class="filter-group">
+          <label>Filter Kelas</label>
+          <select id="kelolaFilterKelas" class="form-control" onchange="renderStudentManagementTable()">
+            <option value="SEMUA">Semua Kelas</option>
+          </select>
+        </div>
+        <div class="filter-group" style="grid-column: span 2;">
+          <label>Cari Nama Siswa / NIS</label>
+          <input type="text" id="kelolaSearchInput" class="form-control" placeholder="Ketik nama siswa atau NIS..." oninput="renderStudentManagementTable()">
+        </div>
+      </div>
+    </div>
+
+    <div class="report-paper" style="padding: 20px;">
+      <div class="table-wrap">
+        <table class="attendance-table" id="tableKelolaSiswa">
+          <thead>
+            <tr>
+              <th style="width: 45px;">No</th>
+              <th style="width: 95px;">ID Siswa</th>
+              <th style="width: 100px;">NIS</th>
+              <th>Nama Siswa</th>
+              <th style="width: 60px;">L/P</th>
+              <th style="width: 110px;">Kelas</th>
+              <th style="width: 90px;">Status</th>
+              <th style="width: 150px;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tableBodyKelolaSiswa"></tbody>
+        </table>
+      </div>
+      <div id="kelolaEmptyState" style="text-align: center; padding: 24px; color: #94a3b8; display: none;">
+        Tidak ada data siswa yang cocok dengan filter pencarian.
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Banner Slogan -->
+  <footer class="app-footer">
+    <span id="footerMotto">— Sehat Jasmani, Cerdas Prestasi —</span>
+  </footer>
+</div>
+
+<!-- Modal Tambah / Edit Siswa -->
+<div class="modal-overlay" id="studentModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modalStudentTitle">Tambah Siswa Baru</h3>
+      <button type="button" class="modal-close-btn" onclick="closeStudentModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="formStudentId" value="">
+      
+      <div class="filter-group">
+        <label>Nama Lengkap Siswa *</label>
+        <input type="text" id="formStudentNama" class="form-control" placeholder="Contoh: Muhammad Farhan" required>
+      </div>
+
+      <div class="filter-group">
+        <label>Nomor Induk Siswa (NIS)</label>
+        <input type="text" id="formStudentNis" class="form-control" placeholder="Contoh: 202615" value="-">
+      </div>
+
+      <div class="filter-group">
+        <label>Jenis Kelamin</label>
+        <select id="formStudentJk" class="form-control">
+          <option value="L">Laki-laki (L)</option>
+          <option value="P">Perempuan (P)</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Pilihan Kelas</label>
+        <select id="formStudentKelasSelect" class="form-control" onchange="onModalClassSelectChange()">
+          <option value="__NEW__">+ Buat / Tambah Kelas Baru...</option>
+        </select>
+      </div>
+
+      <div class="filter-group" id="formNewClassGroup" style="display: none;">
+        <label style="color: #1b5e20;">Nama Kelas Baru *</label>
+        <input type="text" id="formStudentKelasInput" class="form-control" placeholder="Contoh: Kelas 1, Kelas 2, Kelas 5B...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeStudentModal()">Batal</button>
+      <button type="button" class="btn btn-success" onclick="saveStudentFormData()">Simpan Siswa</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Hasil Unduh / Cetak Dokumen Resmi -->
+<div class="modal-overlay" id="modalDownloadDoc">
+  <div class="modal-card" style="max-width: 480px; text-align: center;">
+    <div class="modal-header" style="border-bottom: 2px solid #e2e8f0; justify-content: center; position: relative;">
+      <h3 style="font-size: 1.15rem; color: #ffffff; display: flex; align-items: center; gap: 8px; margin: 0;">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <span id="downloadModalTitle">Dokumen Siap Diunduh!</span>
+      </h3>
+      <button type="button" class="modal-close-btn" onclick="closeDownloadModal()" style="position: absolute; right: 14px; top: 12px; color: #ffffff;">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 24px 20px;">
+      <div style="width: 64px; height: 64px; margin: 0 auto 16px auto; border-radius: 50%; background: #e8f5e9; display: flex; align-items: center; justify-content: center;">
+        <span id="downloadModalIcon" style="font-size: 32px;">📄</span>
+      </div>
+      
+      <h4 id="downloadModalFileName" style="font-size: 1rem; color: #1e293b; margin: 0 0 8px 0; word-break: break-all; font-weight: 700;">Laporan_Presensi.pdf</h4>
+      <p id="downloadModalDesc" style="font-size: 0.88rem; color: #64748b; margin: 0 0 20px 0;">
+        Dokumen resmi telah selesai diproses dan tersimpan aman di Google Drive Anda.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a id="btnDownloadDirectLink" href="#" target="_blank" class="btn btn-success" style="padding: 12px 20px; font-size: 1rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(46,125,50,0.25);">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <span id="btnDownloadDirectText">Unduh Berkas Sekarang</span>
+        </a>
+        
+        <a id="btnViewDriveLink" href="#" target="_blank" class="btn btn-secondary" style="padding: 10px 18px; font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 8px;">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px;"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          Buka / Cetak di Google Drive
+        </a>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content: center; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px;">
+      <button type="button" class="btn btn-secondary" onclick="closeDownloadModal()" style="min-width: 120px;">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notifikasi -->
+<div class="toast-msg" id="toastMsg">Data berhasil disimpan!</div>
+
+<script>
+  /**
+   * ================================================================================
+   * KONFIGURASI API GOOGLE APPS SCRIPT UNTUK DEPLOY VERCEL
+   * ================================================================================
+   */
+  var GAS_API_URL = "https://script.google.com/macros/s/AKfycbxFc5gnwbm6uZjLqfcJe0T2woYaO-D_4BnXyomjknd7xYd03MX3jFMaryC6cEiFSRlm-g/exec";
+
+  /**
+   * Bridge Komunikasi Universal: Otomatis memakai google.script.run jika dibuka di GAS,
+   * atau memakai fetch() POST ke GAS_API_URL jika di-deploy di Vercel!
+   */
+  function callBackendAPI(actionName, payload) {
+    return new Promise(function(resolve, reject) {
+      // 1. Jika dibuka langsung di dalam Google Apps Script
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        var runner = google.script.run
+          .withSuccessHandler(function(res) { resolve(res); })
+          .withFailureHandler(function(err) { reject(err); });
+
+        switch (actionName) {
+          case "getInitialData": return runner.getInitialData();
+          case "getAttendanceByDateAndClass": return runner.getAttendanceByDateAndClass(payload.dateStr, payload.className);
+          case "saveAttendance": return runner.saveAttendance(payload);
+          case "getMonthlyRecap": return runner.getMonthlyRecap(payload.monthYear, payload.className);
+          case "updateSettings": return runner.updateSettings(payload);
+          case "addStudent": return runner.addStudent(payload);
+          case "updateStudent": return runner.updateStudent(payload);
+          case "deleteStudent": return runner.deleteStudent(payload.studentId, payload.isPermanent);
+          case "uploadDokumentasiFoto": return runner.uploadDokumentasiFoto(payload);
+          case "exportReportToPdfServer": return runner.exportReportToPdfServer(payload.htmlContent, payload.fileName);
+          case "exportReportToWordServer": return runner.exportReportToWordServer(payload.htmlContent, payload.fileName);
+          case "exportReportToExcelServer": return runner.exportReportToExcelServer(payload.csvContent, payload.fileName);
+          default: return reject(new Error("Action tidak dikenal: " + actionName));
+        }
+      }
+
+      // 2. Jika di-host di Vercel (Menggunakan fetch POST dengan text/plain agar bebas CORS preflight)
+      if (!GAS_API_URL || GAS_API_URL.indexOf("GANTI_DENGAN_ID_DEPLOYMENT_ANDA") !== -1) {
+        return reject(new Error("URL API Google Apps Script belum diatur di GAS_API_URL."));
+      }
+
+      fetch(GAS_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+          action: actionName,
+          payload: payload || {}
+        })
+      })
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error("HTTP Error " + response.status);
+        }
+        return response.json();
+      })
+      .then(function(data) {
+        resolve(data);
+      })
+      .catch(function(err) {
+        reject(err);
+      });
+    });
+  }
+
+  function isBackendConnected() {
+    var hasGasNative = (typeof google !== 'undefined' && google.script && google.script.run);
+    var hasExternalApi = (GAS_API_URL && GAS_API_URL.startsWith("https://script.google.com/") && GAS_API_URL.indexOf("GANTI_DENGAN_ID") === -1);
+    return hasGasNative || hasExternalApi;
+  }
+
+  /**
+   * Helper: Normalisasi nama kelas agar seragam di seluruh aplikasi
+   */
+  function normalizeClassName(str) {
+    if (!str) return 'Kelas 1';
+    var s = String(str).trim();
+    if (s === '1' || s.toUpperCase() === 'I') return 'Kelas 1';
+    if (s === '2' || s.toUpperCase() === 'II') return 'Kelas 2';
+    if (s === '3' || s.toUpperCase() === 'III') return 'Kelas 3';
+    if (s === '4' || s.toUpperCase() === 'IV') return 'Kelas 4';
+    if (s === '5' || s.toUpperCase() === 'V') return 'Kelas 5';
+    if (s === '6' || s.toUpperCase() === 'VI') return 'Kelas 6';
+    
+    var match = s.match(/(?:kelas|kls|kl)\s*([1-6]|[ivx]+|[a-z0-9]+)/i);
+    if (match) {
+      var val = match[1].toUpperCase();
+      if (val === '1' || val === 'I') return 'Kelas 1';
+      if (val === '2' || val === 'II') return 'Kelas 2';
+      if (val === '3' || val === 'III') return 'Kelas 3';
+      if (val === '4' || val === 'IV') return 'Kelas 4';
+      if (val === '5' || val === 'V') return 'Kelas 5';
+      if (val === '6' || val === 'VI') return 'Kelas 6';
+      return 'Kelas ' + match[1];
+    }
+    return s;
+  }
+
+  /**
+   * CLIENT-SIDE STATE & CACHING
+   */
+  var appState = {
+    settings: {
+      INSTANSI_ATAS: "PEMERINTAH KABUPATEN BANYUWANGI",
+      DINAS: "DINAS PENDIDIKAN DAN KEBUDAYAAN",
+      NAMA_SEKOLAH: "SD NEGERI 3 KENDALREJO",
+      ALAMAT_SEKOLAH: "Jl. Paluagung No. 10 Kec. Tegaldlimo - Banyuwangi",
+      SLOGAN: "Berkarakter Unggul dan Inovatif",
+      MOTTO_BAWAH: "Sehat Jasmani, Cerdas Prestasi",
+      NAMA_GURU: "ANDRI ARDI WILANDRA, S.Pd",
+      NIP_GURU: "NIP. 199112282022211014",
+      JABATAN_GURU: "Guru PJOK",
+      NAMA_KEPSEK: "SRI WAHYUNI, S.Pd.SD",
+      NIP_KEPSEK: "NIP. 198110222014072005",
+      JABATAN_KEPSEK: "Kepala SD Negeri 3 Kendalrejo",
+      KOTA_SURAT: "Kendalrejo",
+      WAKTU_PEMBELAJARAN: "07.00 – 08.30 WIB"
+    },
+    classes: ["Kelas 1", "Kelas 2", "Kelas 3", "Kelas 4", "Kelas 5", "Kelas 6"],
+    students: [
+      { id: "SIS-048", nis: "-", nama: "M.HAMDAN AULIAN PURNOMO", jk: "L", kelas: "Kelas 1", status: "Aktif" },
+      { id: "SIS-049", nis: "-", nama: "EL FANI WAFIQ RADIAKSA", jk: "L", kelas: "Kelas 1", status: "Aktif" },
+      { id: "SIS-050", nis: "-", nama: "M.ANDRA LESMANA", jk: "L", kelas: "Kelas 1", status: "Aktif" },
+      { id: "SIS-051", nis: "-", nama: "SABRINA AULIA ZAHRA", jk: "P", kelas: "Kelas 1", status: "Aktif" },
+      { id: "SIS-052", nis: "-", nama: "QUEENSA ELVARETHA ISMAWAN", jk: "P", kelas: "Kelas 1", status: "Aktif" },
+      { id: "SIS-053", nis: "-", nama: "RILONA NADA ALEA ADITYA", jk: "P", kelas: "Kelas 1", status: "Aktif" },
+      { id: "SIS-054", nis: "-", nama: "RASYA ASIDIQ", jk: "L", kelas: "Kelas 1", status: "Aktif" },
+      { id: "SIS-055", nis: "-", nama: "RIDHON ALQI FARI", jk: "L", kelas: "Kelas 1", status: "Aktif" },
+      { id: "SIS-056", nis: "-", nama: "VIONA AULIA LESIDISTA", jk: "P", kelas: "Kelas 1", status: "Aktif" },
+      { id: "SIS-040", nis: "-", nama: "Chelby Letysa Arinata", jk: "P", kelas: "Kelas 2", status: "Aktif" },
+      { id: "SIS-041", nis: "-", nama: "Reyndra Revansyah Ari Setiawan", jk: "L", kelas: "Kelas 2", status: "Aktif" },
+      { id: "SIS-042", nis: "-", nama: "Atta Hafis Alfarizi", jk: "L", kelas: "Kelas 2", status: "Aktif" },
+      { id: "SIS-043", nis: "-", nama: "Akas Putro Nur Kusumo", jk: "L", kelas: "Kelas 2", status: "Aktif" },
+      { id: "SIS-044", nis: "-", nama: "Devan Abid Atoillah", jk: "L", kelas: "Kelas 2", status: "Aktif" },
+      { id: "SIS-045", nis: "-", nama: "Ledyana Febianti", jk: "P", kelas: "Kelas 2", status: "Aktif" },
+      { id: "SIS-046", nis: "-", nama: "Vania Ardelia Dara", jk: "P", kelas: "Kelas 2", status: "Aktif" },
+      { id: "SIS-047", nis: "-", nama: "Anindia Prajna Paramita", jk: "P", kelas: "Kelas 2", status: "Aktif" },
+      { id: "SIS-019", nis: "-", nama: "ADITYA SYAWAL PRATAMA", jk: "L", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-020", nis: "-", nama: "ADYATMA SERKAN WIRATAMA WALUYO", jk: "L", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-021", nis: "-", nama: "AGIL ADZKA FADIAN", jk: "L", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-022", nis: "-", nama: "ALEXA ANANDA PUTRI", jk: "P", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-023", nis: "-", nama: "ARFAN FAUZAN ALFAREZI", jk: "L", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-024", nis: "-", nama: "FARHAN AL FARIZY", jk: "L", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-025", nis: "-", nama: "FATAN DANIAL AFANDI", jk: "L", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-026", nis: "-", nama: "GIONA KEZIA ZUBI QIRANI", jk: "P", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-027", nis: "-", nama: "M. YUDA AL AUSYI", jk: "L", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-028", nis: "-", nama: "QIANO KHALI WIJAYA", jk: "L", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-029", nis: "-", nama: "SITI ANISA SAFIR", jk: "P", kelas: "Kelas 3", status: "Aktif" },
+      { id: "SIS-010", nis: "-", nama: "ALYA HANINDHIYA NADIRA", jk: "P", kelas: "Kelas 4", status: "Aktif" },
+      { id: "SIS-011", nis: "-", nama: "ARSYA NAYLA AZAHRA", jk: "P", kelas: "Kelas 4", status: "Aktif" },
+      { id: "SIS-012", nis: "-", nama: "ARSYFA PUTRI AZZAHRA", jk: "P", kelas: "Kelas 4", status: "Aktif" },
+      { id: "SIS-013", nis: "-", nama: "ASKA ADITYA OKTAVIANO", jk: "L", kelas: "Kelas 4", status: "Aktif" },
+      { id: "SIS-014", nis: "-", nama: "AZKA ZEINUL NUR AZIZI", jk: "L", kelas: "Kelas 4", status: "Aktif" },
+      { id: "SIS-015", nis: "-", nama: "GHOZALI MADHA WIJAYA", jk: "L", kelas: "Kelas 4", status: "Aktif" },
+      { id: "SIS-016", nis: "-", nama: "LETISYA ADELIA RADINKA", jk: "P", kelas: "Kelas 4", status: "Aktif" },
+      { id: "SIS-017", nis: "-", nama: "RAKA ADI PRAYOGA", jk: "L", kelas: "Kelas 4", status: "Aktif" },
+      { id: "SIS-018", nis: "-", nama: "RINAWATI", jk: "P", kelas: "Kelas 4", status: "Aktif" },
+      { id: "SIS-001", nis: "-", nama: "ALIF KURNIAWAN", jk: "L", kelas: "Kelas 5", status: "Aktif" },
+      { id: "SIS-002", nis: "-", nama: "ARDELLA FLORA FELISIA", jk: "P", kelas: "Kelas 5", status: "Aktif" },
+      { id: "SIS-003", nis: "-", nama: "ARZIEL DIANDRA PANGESTU", jk: "L", kelas: "Kelas 5", status: "Aktif" },
+      { id: "SIS-004", nis: "-", nama: "NAYLA NINDIA PUTRI", jk: "P", kelas: "Kelas 5", status: "Aktif" },
+      { id: "SIS-005", nis: "-", nama: "RACHEL MIKAILA PUTRI", jk: "P", kelas: "Kelas 5", status: "Aktif" },
+      { id: "SIS-006", nis: "-", nama: "SYAKILA ALYA LIDIA WATI", jk: "P", kelas: "Kelas 5", status: "Aktif" },
+      { id: "SIS-007", nis: "-", nama: "VALLENT ARDELIA DARA", jk: "P", kelas: "Kelas 5", status: "Aktif" },
+      { id: "SIS-008", nis: "-", nama: "M. DELVIN SAPUTRA", jk: "L", kelas: "Kelas 5", status: "Aktif" },
+      { id: "SIS-009", nis: "-", nama: "BINTANG", jk: "L", kelas: "Kelas 5", status: "Aktif" },
+      { id: "SIS-030", nis: "-", nama: "CANTIKA CHALISTA MAHARANI", jk: "P", kelas: "Kelas 6", status: "Aktif" },
+      { id: "SIS-031", nis: "-", nama: "MOHAMMAD FERI ADITYA", jk: "L", kelas: "Kelas 6", status: "Aktif" },
+      { id: "SIS-032", nis: "-", nama: "FAJAR PUTRA MAHMUDI", jk: "L", kelas: "Kelas 6", status: "Aktif" },
+      { id: "SIS-033", nis: "-", nama: "WEGAN GIBRAN ARDHANI", jk: "L", kelas: "Kelas 6", status: "Aktif" },
+      { id: "SIS-034", nis: "-", nama: "REDHIT ERZA PUTRA IMAMSYAH", jk: "L", kelas: "Kelas 6", status: "Aktif" },
+      { id: "SIS-035", nis: "-", nama: "LETICIA OCHA AVERLYN", jk: "P", kelas: "Kelas 6", status: "Aktif" },
+      { id: "SIS-036", nis: "-", nama: "BINTANG PRADANA DIYANSYAH", jk: "L", kelas: "Kelas 6", status: "Aktif" },
+      { id: "SIS-037", nis: "-", nama: "MURENO ABIZAR ADIYAKSA", jk: "L", kelas: "Kelas 6", status: "Aktif" },
+      { id: "SIS-038", nis: "-", nama: "AHMAD FINO ALI SETIAWAN", jk: "L", kelas: "Kelas 6", status: "Aktif" },
+      { id: "SIS-039", nis: "-", nama: "OLDAN REZA ADIONO", jk: "L", kelas: "Kelas 6", status: "Aktif" }
+    ],
+    currentAttendance: {},
+    selectedDate: "2026-11-18",
+    selectedClass: "Kelas 5",
+    currentPhotoBase64: null
+  };
+
+  // Inisialisasi Aplikasi
+  window.addEventListener('DOMContentLoaded', function() {
+    initDefaultValues();
+    renderApp();
+    
+    if (isBackendConnected()) {
+      loadDataFromGAS();
+    } else {
+      console.info("Menjalankan SiPresensi dalam Mode Lokal (atur GAS_API_URL untuk terhubung ke Google Sheets).");
+    }
+  });
+
+  function initDefaultValues() {
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var dd = String(today.getDate()).padStart(2, '0');
+    var todayStr = yyyy + '-' + mm + '-' + dd;
+
+    var dateInput = document.getElementById('inputTanggal');
+    if (dateInput) {
+      dateInput.value = todayStr;
+      appState.selectedDate = todayStr;
+      syncMonthFromDate();
+    }
+  }
+
+  /**
+   * Panggilan ke Google Apps Script Backend
+   */
+  function loadDataFromGAS() {
+    callBackendAPI("getInitialData")
+      .then(function(res) {
+        if (res && res.success) {
+          if (res.settings) appState.settings = Object.assign(appState.settings, res.settings);
+          if (res.classes && res.classes.length > 0) {
+            var setC = {};
+            ["Kelas 1", "Kelas 2", "Kelas 3", "Kelas 4", "Kelas 5", "Kelas 6"].forEach(function(c) { setC[c] = true; });
+            res.classes.forEach(function(c) { setC[normalizeClassName(c)] = true; });
+            appState.classes = Object.keys(setC).sort(function(a, b) {
+              return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+            });
+          }
+          if (res.students && res.students.length > 0) {
+            appState.students = res.students.map(function(s) {
+              s.kelas = normalizeClassName(s.kelas);
+              return s;
+            });
+            showToast("Sinkronisasi Berhasil: " + appState.students.length + " Siswa termuat dari Google Sheets!");
+          }
+          if (res.todayStr) {
+            appState.selectedDate = res.todayStr;
+            var tglElem = document.getElementById('inputTanggal');
+            if (tglElem) tglElem.value = res.todayStr;
+          }
+          renderApp();
+        } else {
+          showToast("Gagal memuat data: " + (res ? res.message : "Respon server kosong"));
+        }
+      })
+      .catch(function(err) {
+        console.warn("GAS load error, continuing with local data:", err);
+        showToast("Koneksi Google Sheets: " + (err.message || err));
+      });
+  }
+
+  function renderApp() {
+    var elHeaderSekolah = document.getElementById('headerNamaSekolah');
+    if (elHeaderSekolah) elHeaderSekolah.innerText = appState.settings.NAMA_SEKOLAH || 'SDN 3 KENDALREJO';
+
+    var elHeaderSlogan = document.getElementById('headerSlogan');
+    if (elHeaderSlogan) elHeaderSlogan.innerText = '"' + (appState.settings.SLOGAN || 'Berkarakter Unggul dan Inovatif') + '"';
+
+    var elKopSekolah = document.getElementById('kopSekolah');
+    if (elKopSekolah) elKopSekolah.innerText = appState.settings.NAMA_SEKOLAH || 'SD NEGERI 3 KENDALREJO';
+
+    var elKopAlamat = document.getElementById('kopAlamat');
+    if (elKopAlamat) elKopAlamat.innerText = appState.settings.ALAMAT_SEKOLAH || 'Jl. Paluagung No. 10 Kec. Tegaldlimo - Banyuwangi';
+
+    var elKopInstansi = document.getElementById('kopInstansi');
+    if (elKopInstansi) elKopInstansi.innerHTML = (appState.settings.INSTANSI_ATAS || 'PEMERINTAH KABUPATEN BANYUWANGI') + '<br>' + (appState.settings.DINAS || 'DINAS PENDIDIKAN DAN KEBUDAYAAN');
+
+    var elFooter = document.getElementById('footerMotto');
+    if (elFooter) elFooter.innerText = '— ' + (appState.settings.MOTTO_BAWAH || 'Sehat Jasmani, Cerdas Prestasi') + ' —';
+
+    var classSelect = document.getElementById('selectKelas');
+    var rekapClassSelect = document.getElementById('rekapFilterKelas');
+    if (classSelect) {
+      classSelect.innerHTML = '';
+      appState.classes.forEach(function(cls) {
+        var opt = document.createElement('option');
+        opt.value = cls;
+        opt.text = cls;
+        if (cls === appState.selectedClass) opt.selected = true;
+        classSelect.appendChild(opt);
+      });
+    }
+
+    if (rekapClassSelect && classSelect) {
+      rekapClassSelect.innerHTML = classSelect.innerHTML;
+    }
+
+    syncMonthFromDate();
+    renderAttendanceTable();
+    updateReportMeta();
+  }
+
+  /**
+   * Render Tabel Presensi Harian Siswa
+   */
+  function renderAttendanceTable() {
+    var tbody = document.getElementById('tableBodyPresensi');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    var normCurrent = normalizeClassName(appState.selectedClass);
+    var filtered = appState.students.filter(function(s) {
+      return normalizeClassName(s.kelas) === normCurrent;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="padding: 24px; color: #94a3b8;">Belum ada data siswa untuk kelas ini.</td></tr>';
+      updateSummaryCounts(0, 0, 0, 0, 0);
+      return;
+    }
+
+    filtered.forEach(function(st, idx) {
+      var stData = appState.currentAttendance[st.id] || { status: 'Hadir', keterangan: '-' };
+      var tr = document.createElement('tr');
+
+      tr.innerHTML = 
+        '<td class="text-center">' + (idx + 1) + '</td>' +
+        '<td><strong>' + escapeHtml(st.nama) + '</strong></td>' +
+        '<td class="text-center">' + escapeHtml(st.jk) + '</td>' +
+        '<td class="status-check-cell" onclick="setStudentStatus(\'' + st.id + '\', \'Hadir\')">' +
+          (stData.status === 'Hadir' ? '<span class="check-mark-icon">✓</span>' : '<span class="dash-mark">-</span>') +
+        '</td>' +
+        '<td class="status-check-cell" onclick="setStudentStatus(\'' + st.id + '\', \'Sakit\')">' +
+          (stData.status === 'Sakit' ? '<span class="status-badge badge-sakit">S</span>' : '<span class="dash-mark">-</span>') +
+        '</td>' +
+        '<td class="status-check-cell" onclick="setStudentStatus(\'' + st.id + '\', \'Izin\')">' +
+          (stData.status === 'Izin' ? '<span class="status-badge badge-izin">I</span>' : '<span class="dash-mark">-</span>') +
+        '</td>' +
+        '<td class="status-check-cell" onclick="setStudentStatus(\'' + st.id + '\', \'Alpha\')">' +
+          (stData.status === 'Alpha' ? '<span class="status-badge badge-alpha">A</span>' : '<span class="dash-mark">-</span>') +
+        '</td>' +
+        '<td>' +
+          '<input type="text" class="form-control" style="padding: 4px 8px; font-size: 0.82rem;" value="' + escapeHtml(stData.keterangan || '-') + '" onchange="setStudentKet(\'' + st.id + '\', this.value)">' +
+        '</td>';
+
+      tbody.appendChild(tr);
+    });
+
+    recalculateSummary();
+  }
+
+  function setStudentStatus(studentId, newStatus) {
+    if (!appState.currentAttendance[studentId]) {
+      appState.currentAttendance[studentId] = { status: newStatus, keterangan: '-' };
+    } else {
+      appState.currentAttendance[studentId].status = newStatus;
+    }
+    renderAttendanceTable();
+  }
+
+  function setStudentKet(studentId, val) {
+    if (!appState.currentAttendance[studentId]) {
+      appState.currentAttendance[studentId] = { status: 'Hadir', keterangan: val };
+    } else {
+      appState.currentAttendance[studentId].keterangan = val;
+    }
+  }
+
+  function markAllPresent() {
+    var normCurrent = normalizeClassName(appState.selectedClass);
+    var filtered = appState.students.filter(function(s) {
+      return normalizeClassName(s.kelas) === normCurrent;
+    });
+
+    filtered.forEach(function(s) {
+      if (!appState.currentAttendance[s.id]) {
+        appState.currentAttendance[s.id] = { status: 'Hadir', keterangan: '-' };
+      } else {
+        appState.currentAttendance[s.id].status = 'Hadir';
+      }
+    });
+
+    renderAttendanceTable();
+    showToast("Seluruh siswa telah ditandai HADIR!");
+  }
+
+  function recalculateSummary() {
+    var normCurrent = normalizeClassName(appState.selectedClass);
+    var filtered = appState.students.filter(function(s) {
+      return normalizeClassName(s.kelas) === normCurrent;
+    });
+
+    var total = filtered.length;
+    var hadir = 0, sakit = 0, izin = 0, alpha = 0;
+
+    filtered.forEach(function(s) {
+      var st = appState.currentAttendance[s.id] ? appState.currentAttendance[s.id].status : 'Hadir';
+      if (st === 'Hadir') hadir++;
+      else if (st === 'Sakit') sakit++;
+      else if (st === 'Izin') izin++;
+      else if (st === 'Alpha') alpha++;
+    });
+
+    updateSummaryCounts(total, hadir, sakit, izin, alpha);
+  }
+
+  function updateSummaryCounts(total, hadir, sakit, izin, alpha) {
+    var pct = total > 0 ? Math.round((hadir / total) * 100) : 0;
+    document.getElementById('sumTotalSiswa').innerText = ': ' + total + ' Orang';
+    document.getElementById('sumHadir').innerText = ': ' + hadir + ' Orang (' + pct + '%)';
+    document.getElementById('sumSakit').innerText = ': ' + sakit + ' Orang';
+    document.getElementById('sumIzin').innerText = ': ' + izin + ' Orang';
+    document.getElementById('sumAlpha').innerText = ': ' + alpha + ' Orang';
+  }
+
+  function updateReportMeta() {
+    var rawDate = document.getElementById('inputTanggal').value;
+    var className = document.getElementById('selectKelas').value;
+    appState.selectedDate = rawDate;
+    appState.selectedClass = className;
+
+    var dateObj = new Date(rawDate + 'T00:00:00');
+    var hariList = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    var bulanList = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+    var hariName = hariList[dateObj.getDay()] || 'Hari';
+    var tglNum = dateObj.getDate() || 18;
+    var blnName = bulanList[dateObj.getMonth()] || '';
+    var thnNum = dateObj.getFullYear() || 2026;
+
+    var fullFormattedDate = hariName + ', ' + tglNum + ' ' + blnName + ' ' + thnNum;
+    var inputWaktuElem = document.getElementById('inputWaktu');
+    var waktu = inputWaktuElem ? inputWaktuElem.value : (appState.settings.WAKTU_PEMBELAJARAN || '07.00 – 08.30 WIB');
+
+    var dailyCardMetaSubtitle = document.getElementById('dailyCardMetaSubtitle');
+    if (dailyCardMetaSubtitle) {
+      dailyCardMetaSubtitle.innerText = 'Kelas: ' + className + ' | Tanggal: ' + fullFormattedDate + ' | Jam: ' + waktu;
+    }
+  }
+
+  function setPresetWaktu(val) {
+    var inputWaktuElem = document.getElementById('inputWaktu');
+    if (inputWaktuElem) {
+      inputWaktuElem.value = val;
+      updateReportMeta();
+      showToast("Waktu diatur: " + val);
+    }
+  }
+
+  var NAMA_BULAN_INDONESIA = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+
+  function populateMonthDropdown(selectedYear, targetValue) {
+    var selectBulan = document.getElementById('selectBulan');
+    if (!selectBulan) return;
+
+    var year = selectedYear || new Date().getFullYear();
+    var currentVal = targetValue || selectBulan.value;
+
+    selectBulan.innerHTML = '';
+    for (var m = 1; m <= 12; m++) {
+      var mm = m < 10 ? '0' + m : '' + m;
+      var val = year + '-' + mm;
+      var opt = document.createElement('option');
+      opt.value = val;
+      opt.text = NAMA_BULAN_INDONESIA[m - 1] + ' ' + year;
+      if (val === currentVal) opt.selected = true;
+      selectBulan.appendChild(opt);
+    }
+    if (currentVal) selectBulan.value = currentVal;
+  }
+
+  function syncMonthFromDate() {
+    var dateInput = document.getElementById('inputTanggal');
+    if (!dateInput || !dateInput.value) return;
+
+    var parts = dateInput.value.split('-');
+    if (parts.length >= 2) {
+      var year = parseInt(parts[0], 10);
+      var monthYearVal = parts[0] + '-' + parts[1];
+      populateMonthDropdown(year, monthYearVal);
+
+      var rekapFilterBulan = document.getElementById('rekapFilterBulan');
+      if (rekapFilterBulan) rekapFilterBulan.value = monthYearVal;
+    }
+  }
+
+  function onFilterChange() {
+    syncMonthFromDate();
+    updateReportMeta();
+    renderAttendanceTable();
+  }
+
+  function onClassChange() {
+    appState.selectedClass = document.getElementById('selectKelas').value;
+    updateReportMeta();
+    renderAttendanceTable();
+  }
+
+  function onMonthSelectChange() {
+    var val = document.getElementById('selectBulan').value;
+    var dateInput = document.getElementById('inputTanggal');
+    if (dateInput && val) {
+      var parts = val.split('-');
+      var newYear = parseInt(parts[0], 10);
+      var newMonth = parseInt(parts[1], 10);
+
+      var currentDay = 18;
+      if (dateInput.value) {
+        var dateParts = dateInput.value.split('-');
+        if (dateParts.length === 3) currentDay = parseInt(dateParts[2], 10) || 18;
+      }
+
+      var maxDays = new Date(newYear, newMonth, 0).getDate();
+      if (currentDay > maxDays) currentDay = maxDays;
+      var dd = currentDay < 10 ? '0' + currentDay : '' + currentDay;
+
+      dateInput.value = val + '-' + dd;
+      appState.selectedDate = dateInput.value;
+
+      var rekapFilterBulan = document.getElementById('rekapFilterBulan');
+      if (rekapFilterBulan) rekapFilterBulan.value = val;
+
+      updateReportMeta();
+      renderAttendanceTable();
+    }
+  }
+
+  function triggerPhotoUpload() {
+    document.getElementById('fileFotoKegiatan').click();
+  }
+
+  function handlePhotoUpload(inputElement) {
+    if (!inputElement.files || !inputElement.files[0]) return;
+    var file = inputElement.files[0];
+
+    if (!file.type.match('image.*')) {
+      alert("Harap pilih file gambar (JPG, PNG, atau WEBP).");
+      return;
+    }
+
+    var uploadStatus = document.getElementById('uploadStatusText');
+    uploadStatus.style.display = 'inline';
+    uploadStatus.innerText = "Mengompresi foto...";
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var rawDataUrl = e.target.result;
+      
+      compressImage(rawDataUrl, 1200, 0.8, function(compressedDataUrl) {
+        var previewContainer = document.getElementById('previewFotoContainer');
+        var previewImg = document.getElementById('previewFotoImg');
+        var previewName = document.getElementById('previewFotoName');
+        var previewSize = document.getElementById('previewFotoSize');
+
+        previewImg.src = compressedDataUrl;
+        previewName.innerText = file.name || "Foto_Kegiatan.jpg";
+        var approxKb = Math.round(compressedDataUrl.length * 3 / 4 / 1024);
+        previewSize.innerText = "Ukuran terkompresi: ~" + approxKb + " KB (Ringan & Cepat)";
+        previewContainer.style.display = 'flex';
+
+        appState.currentPhotoBase64 = compressedDataUrl;
+
+        if (isBackendConnected()) {
+          uploadStatus.innerText = "Mengunggah ke Google Drive...";
+          var btnUpload = document.getElementById('btnUploadFoto');
+          if (btnUpload) btnUpload.disabled = true;
+
+          var payload = {
+            base64Data: compressedDataUrl,
+            mimeType: "image/jpeg",
+            fileName: file.name,
+            className: appState.selectedClass,
+            dateStr: appState.selectedDate
+          };
+
+          callBackendAPI("uploadDokumentasiFoto", payload)
+            .then(function(res) {
+              if (btnUpload) btnUpload.disabled = false;
+              if (res && res.success) {
+                document.getElementById('inputUrlDoc').value = res.fileUrl;
+                uploadStatus.innerText = "✓ Tersimpan di Drive";
+                showToast("Foto berhasil diunggah ke Google Drive!");
+              } else {
+                uploadStatus.innerText = "Gagal: " + (res ? res.message : "Error");
+                alert("Gagal unggah ke Drive: " + (res ? res.message : "Error"));
+              }
+            })
+            .catch(function(err) {
+              if (btnUpload) btnUpload.disabled = false;
+              uploadStatus.innerText = "Error: " + err.message;
+              alert("Error Drive: " + err.message);
+            });
+        } else {
+          document.getElementById('inputUrlDoc').value = "https://drive.google.com/file/d/foto-kegiatan-" + (file.name || 'preview');
+          uploadStatus.innerText = "✓ Foto Siap (Mode Lokal)";
+          showToast("Foto berhasil dimuat!");
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function compressImage(dataUrl, maxDimension, quality, callback) {
+    var img = new Image();
+    img.onload = function() {
+      var width = img.width;
+      var height = img.height;
+
+      if (width > height) {
+        if (width > maxDimension) {
+          height = Math.round(height * maxDimension / width);
+          width = maxDimension;
+        }
+      } else {
+        if (height > maxDimension) {
+          width = Math.round(width * maxDimension / height);
+          height = maxDimension;
+        }
+      }
+
+      var canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      var compressed = canvas.toDataURL('image/jpeg', quality);
+      callback(compressed);
+    };
+    img.src = dataUrl;
+  }
+
+  function removeSelectedPhoto() {
+    var fileInput = document.getElementById('fileFotoKegiatan');
+    if (fileInput) fileInput.value = '';
+    document.getElementById('previewFotoContainer').style.display = 'none';
+    document.getElementById('previewFotoImg').src = '';
+    appState.currentPhotoBase64 = null;
+    document.getElementById('inputUrlDoc').value = '';
+    document.getElementById('uploadStatusText').style.display = 'none';
+    showToast("Foto dokumentasi dihapus.");
+  }
+
+  function openDocUrl() {
+    var url = document.getElementById('inputUrlDoc').value;
+    if (url && url.startsWith('http')) {
+      window.open(url, '_blank');
+    } else if (appState.currentPhotoBase64) {
+      var w = window.open("");
+      w.document.write('<title>Dokumentasi Kegiatan</title><img src="' + appState.currentPhotoBase64 + '" style="max-width:100%; height:auto;">');
+    } else {
+      alert("Masukkan link dokumentasi Google Drive atau unggah foto terlebih dahulu.");
+    }
+  }
+
+  function resetForm() {
+    if (confirm("Reset isian presensi kembali ke default?")) {
+      appState.currentAttendance = {};
+      renderAttendanceTable();
+      showToast("Form berhasil di-reset.");
+    }
+  }
+
+  /**
+   * Simpan Presensi ke Backend
+   */
+  function saveAttendanceData() {
+    var currentClass = appState.selectedClass;
+    var normCurrent = normalizeClassName(currentClass);
+    var filtered = appState.students.filter(function(s) {
+      return normalizeClassName(s.kelas) === normCurrent;
+    });
+
+    var records = filtered.map(function(s) {
+      var stData = appState.currentAttendance[s.id] || { status: 'Hadir', keterangan: '-' };
+      return {
+        idSiswa: s.id,
+        nama: s.nama,
+        jk: s.jk,
+        status: stData.status,
+        keterangan: stData.keterangan || '-'
+      };
+    });
+
+    var waktuVal = document.getElementById('inputWaktu') ? document.getElementById('inputWaktu').value : (appState.settings.WAKTU_PEMBELAJARAN || '07.00 – 08.30 WIB');
+    var payload = {
+      date: appState.selectedDate,
+      className: currentClass,
+      materi: document.getElementById('inputMateri').value || '-',
+      waktu: waktuVal,
+      urlDoc: document.getElementById('inputUrlDoc').value || '',
+      records: records
+    };
+
+    if (isBackendConnected()) {
+      showToast("Menyimpan ke Google Sheets...");
+      callBackendAPI("saveAttendance", payload)
+        .then(function(res) {
+          if (res && res.success) {
+            showToast("Berhasil: " + res.message);
+          } else {
+            alert("Gagal menyimpan: " + (res ? res.message : "Terjadi kesalahan."));
+          }
+        })
+        .catch(function(err) {
+          alert("Error: " + err.message);
+        });
+    } else {
+      localStorage.setItem('presensi_' + payload.date + '_' + payload.className, JSON.stringify(payload));
+      showToast("Tersimpan di penyimpanan lokal browser!");
+    }
+  }
+
+  /**
+   * Rekap Bulanan
+   */
+  function loadMonthlyRecap() {
+    var monthVal = document.getElementById('rekapFilterBulan').value;
+    var classVal = document.getElementById('rekapFilterKelas').value;
+    var normClass = normalizeClassName(classVal);
+
+    var parts = monthVal.split('-');
+    var yr = parseInt(parts[0], 10);
+    var mo = parseInt(parts[1], 10);
+    var lastDay = new Date(yr, mo, 0).getDate();
+    var blnNama = NAMA_BULAN_INDONESIA[mo - 1] || '';
+    var dateRecapStr = (appState.settings.KOTA_SURAT || 'Kendalrejo') + ', ' + lastDay + ' ' + blnNama + ' ' + yr;
+
+    document.getElementById('labelBulanRekap').innerText = 'Periode: ' + blnNama + ' ' + yr + ' – ' + classVal;
+
+    var sigDateRecap = document.getElementById('sigDateRecap');
+    if (sigDateRecap) sigDateRecap.innerText = dateRecapStr;
+    var sigRoleRecap = document.getElementById('sigRoleRecap');
+    if (sigRoleRecap) sigRoleRecap.innerText = appState.settings.JABATAN_GURU || 'Guru PJOK';
+    var sigNameRecap = document.getElementById('sigNameRecap');
+    if (sigNameRecap) sigNameRecap.innerText = appState.settings.NAMA_GURU || 'ANDRI ARDI WILANDRA, S.Pd';
+    var sigNipRecap = document.getElementById('sigNipRecap');
+    if (sigNipRecap) sigNipRecap.innerText = appState.settings.NIP_GURU || 'NIP. 199112282022211014';
+
+    var sigKepsekRoleRecap = document.getElementById('sigKepsekRoleRecap');
+    if (sigKepsekRoleRecap) sigKepsekRoleRecap.innerText = appState.settings.JABATAN_KEPSEK || 'Kepala SD Negeri 3 Kendalrejo';
+    var sigKepsekNameRecap = document.getElementById('sigKepsekNameRecap');
+    if (sigKepsekNameRecap) sigKepsekNameRecap.innerText = appState.settings.NAMA_KEPSEK || 'SRI WAHYUNI, S.Pd.SD';
+    var sigKepsekNipRecap = document.getElementById('sigKepsekNipRecap');
+    if (sigKepsekNipRecap) sigKepsekNipRecap.innerText = appState.settings.NIP_KEPSEK || 'NIP. 198110222014072005';
+
+    var tbody = document.getElementById('tableBodyRekap');
+    tbody.innerHTML = '';
+
+    var filtered = appState.students.filter(function(s) {
+      return normalizeClassName(s.kelas) === normClass;
+    });
+
+    if (isBackendConnected()) {
+      callBackendAPI("getMonthlyRecap", { monthYear: monthVal, className: classVal })
+        .then(function(res) {
+          if (res && res.success) {
+            renderRekapRows(res.students);
+            renderJurnalMateri(res.meetings || []);
+          }
+        })
+        .catch(function(err) {
+          console.warn("Gagal memuat rekap bulanan:", err);
+        });
+    } else {
+      var mockList = filtered.map(function(s) {
+        return {
+          id: s.id,
+          nama: s.nama,
+          jk: s.jk,
+          hadir: 8,
+          sakit: 0,
+          izin: 0,
+          alpha: 0,
+          persen: 100
+        };
+      });
+      renderRekapRows(mockList);
+
+      var currentMateri = document.getElementById('inputMateri') ? document.getElementById('inputMateri').value : 'Variasi Gerak Lokomotor Melompat & Meloncat';
+      var currentDoc = document.getElementById('inputUrlDoc') ? document.getElementById('inputUrlDoc').value : '';
+      var mockMeetings = [
+        { tanggal: yr + '-' + (mo < 10 ? '0' + mo : mo) + '-07', materi: 'Pengenalan Aktivitas Gerak & Senam Pagi', urlDoc: '' },
+        { tanggal: yr + '-' + (mo < 10 ? '0' + mo : mo) + '-14', materi: 'Gerak Dasar Lokomotor Berjalan & Berlari Cepat', urlDoc: '' },
+        { tanggal: yr + '-' + (mo < 10 ? '0' + mo : mo) + '-21', materi: currentMateri, urlDoc: currentDoc },
+        { tanggal: yr + '-' + (mo < 10 ? '0' + mo : mo) + '-28', materi: 'Evaluasi Kebugaran Jasmani & Pendinginan', urlDoc: '' }
+      ];
+      renderJurnalMateri(mockMeetings);
+    }
+  }
+
+  function renderJurnalMateri(meetings) {
+    var tbody = document.getElementById('tableBodyJurnalMateri');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!meetings || meetings.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="text-center" style="padding: 14px; color: #94a3b8;">Belum ada catatan materi pembelajaran pada bulan ini.</td></tr>';
+      return;
+    }
+
+    meetings.forEach(function(m, idx) {
+      var tr = document.createElement('tr');
+      var docLink = m.urlDoc ? '<a href="' + escapeHtml(m.urlDoc) + '" target="_blank" style="color: #1b5e20; font-weight: 600; text-decoration: underline;">Lihat Foto</a>' : '<span style="color: #94a3b8;">-</span>';
+      tr.innerHTML = 
+        '<td class="text-center">' + (idx + 1) + '</td>' +
+        '<td class="text-center"><strong>' + escapeHtml(m.tanggal) + '</strong></td>' +
+        '<td>' + escapeHtml(m.materi) + '</td>' +
+        '<td class="text-center">' + docLink + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderRekapRows(list) {
+    var tbody = document.getElementById('tableBodyRekap');
+    tbody.innerHTML = '';
+
+    var totalHadir = 0, totalSakit = 0, totalIzin = 0, totalAlpha = 0;
+
+    list.forEach(function(item, idx) {
+      totalHadir += item.hadir;
+      totalSakit += item.sakit;
+      totalIzin += item.izin;
+      totalAlpha += item.alpha;
+
+      var tr = document.createElement('tr');
+      tr.innerHTML = 
+        '<td class="text-center">' + (idx + 1) + '</td>' +
+        '<td><strong>' + escapeHtml(item.nama) + '</strong></td>' +
+        '<td class="text-center">' + escapeHtml(item.jk) + '</td>' +
+        '<td class="text-center">' + item.hadir + '</td>' +
+        '<td class="text-center">' + item.sakit + '</td>' +
+        '<td class="text-center">' + item.izin + '</td>' +
+        '<td class="text-center">' + item.alpha + '</td>' +
+        '<td class="text-center"><strong>' + item.persen + '%</strong></td>';
+      tbody.appendChild(tr);
+    });
+
+    var summaryDiv = document.getElementById('rekapAkumulasiList');
+    summaryDiv.innerHTML = 
+      '<div class="summary-item"><span>Total Hadir</span><strong>' + totalHadir + ' Kali</strong></div>' +
+      '<div class="summary-item"><span>Total Sakit</span><strong>' + totalSakit + ' Kali</strong></div>' +
+      '<div class="summary-item"><span>Total Izin</span><strong>' + totalIzin + ' Kali</strong></div>' +
+      '<div class="summary-item"><span>Total Alpha</span><strong>' + totalAlpha + ' Kali</strong></div>';
+  }
+
+  /**
+   * PUSAT CETAK & EKSPOR DOKUMEN RESMI
+   */
+  function cetakLaporanHarianDariTab1() {
+    switchTab('cetak');
+    var jenisSel = document.getElementById('cetakJenisLaporan');
+    if (jenisSel) jenisSel.value = 'HARIAN';
+    var kelasSel = document.getElementById('cetakFilterKelas');
+    if (kelasSel) kelasSel.value = appState.selectedClass;
+    var tglInput = document.getElementById('cetakFilterTanggal');
+    if (tglInput) tglInput.value = appState.selectedDate;
+    onCetakFilterChange();
+    showToast("Membuka dokumen presensi harian untuk dicetak...");
+  }
+
+  function cetakRekapBulananDariTab2() {
+    switchTab('cetak');
+    var jenisSel = document.getElementById('cetakJenisLaporan');
+    if (jenisSel) jenisSel.value = 'BULANAN';
+    var kelasSel = document.getElementById('cetakFilterKelas');
+    if (kelasSel) kelasSel.value = document.getElementById('rekapFilterKelas').value;
+    var blnInput = document.getElementById('cetakFilterBulan');
+    if (blnInput) blnInput.value = document.getElementById('rekapFilterBulan').value;
+    onCetakFilterChange();
+    showToast("Membuka dokumen rekap bulanan untuk dicetak...");
+  }
+
+  function initCetakTab() {
+    var cetakFilterKelas = document.getElementById('cetakFilterKelas');
+    if (cetakFilterKelas) {
+      var current = cetakFilterKelas.value || appState.selectedClass || 'Kelas 1';
+      cetakFilterKelas.innerHTML = '';
+      appState.classes.forEach(function(cls) {
+        var opt = document.createElement('option');
+        opt.value = cls;
+        opt.text = cls;
+        if (cls === current) opt.selected = true;
+        cetakFilterKelas.appendChild(opt);
+      });
+    }
+
+    var tglInput = document.getElementById('cetakFilterTanggal');
+    if (tglInput && !tglInput.value) {
+      tglInput.value = appState.selectedDate || document.getElementById('inputTanggal').value;
+    }
+
+    var blnInput = document.getElementById('cetakFilterBulan');
+    if (blnInput && !blnInput.value) {
+      blnInput.value = document.getElementById('rekapFilterBulan').value;
+    }
+
+    var kopInst = document.getElementById('cetakKopInstansi');
+    if (kopInst) kopInst.innerHTML = (appState.settings.INSTANSI_ATAS || 'PEMERINTAH KABUPATEN BANYUWANGI') + '<br>' + (appState.settings.DINAS || 'DINAS PENDIDIKAN DAN KEBUDAYAAN');
+    var kopSek = document.getElementById('cetakKopSekolah');
+    if (kopSek) kopSek.innerText = appState.settings.NAMA_SEKOLAH || 'SD NEGERI 3 KENDALREJO';
+    var kopAlm = document.getElementById('cetakKopAlamat');
+    if (kopAlm) kopAlm.innerText = appState.settings.ALAMAT_SEKOLAH || 'Jl. Paluagung No. 10 Kec. Tegaldlimo - Banyuwangi';
+
+    renderCetakPreview();
+  }
+
+  function onCetakFilterChange() {
+    var jenis = document.getElementById('cetakJenisLaporan').value;
+    var grpTgl = document.getElementById('cetakGroupTanggal');
+    var grpBln = document.getElementById('cetakGroupBulan');
+    var metaHarian = document.getElementById('cetakMetaGridHarian');
+    var jurnalBox = document.getElementById('cetakJurnalContainer');
+
+    if (jenis === 'HARIAN') {
+      if (grpTgl) grpTgl.style.display = 'block';
+      if (grpBln) grpBln.style.display = 'none';
+      if (metaHarian) metaHarian.style.display = 'grid';
+      if (jurnalBox) jurnalBox.style.display = 'none';
+    } else {
+      if (grpTgl) grpTgl.style.display = 'none';
+      if (grpBln) grpBln.style.display = 'block';
+      if (metaHarian) metaHarian.style.display = 'none';
+      if (jurnalBox) jurnalBox.style.display = 'block';
+    }
+
+    renderCetakPreview();
+  }
+
+  function renderCetakPreview() {
+    var jenisElem = document.getElementById('cetakJenisLaporan');
+    if (!jenisElem) return;
+    var jenis = jenisElem.value;
+    var classVal = (document.getElementById('cetakFilterKelas') && document.getElementById('cetakFilterKelas').value) || appState.selectedClass;
+    var normClass = normalizeClassName(classVal);
+    var filtered = appState.students.filter(function(s) {
+      return normalizeClassName(s.kelas) === normClass;
+    });
+
+    var container = document.getElementById('cetakTableContainer');
+    var summaryList = document.getElementById('cetakSummaryList');
+    var summaryHeading = document.getElementById('cetakSummaryHeading');
+    var fotoBox = document.getElementById('cetakFotoBox');
+    var fotoImg = document.getElementById('cetakFotoImg');
+
+    if (jenis === 'HARIAN') {
+      var dateVal = (document.getElementById('cetakFilterTanggal') && document.getElementById('cetakFilterTanggal').value) || appState.selectedDate;
+      var dateObj = new Date(dateVal + 'T00:00:00');
+      var hariList = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      var hariName = hariList[dateObj.getDay()] || 'Hari';
+      var tglNum = dateObj.getDate() || 18;
+      var blnName = NAMA_BULAN_INDONESIA[dateObj.getMonth()] || '';
+      var thnNum = dateObj.getFullYear() || 2026;
+      var fullDateStr = hariName + ', ' + tglNum + ' ' + blnName + ' ' + thnNum;
+      var shortDateStr = (appState.settings.KOTA_SURAT || 'Kendalrejo') + ', ' + tglNum + ' ' + blnName + ' ' + thnNum;
+
+      document.getElementById('cetakJudulLaporan').innerText = 'LAPORAN PRESENSI HARIAN';
+      document.getElementById('cetakSubJudulLaporan').innerText = 'Tanggal : ' + fullDateStr;
+
+      var materiVal = document.getElementById('inputMateri') ? document.getElementById('inputMateri').value : '-';
+      var waktuVal = document.getElementById('inputWaktu') ? document.getElementById('inputWaktu').value : '07.00 – 08.30 WIB';
+      document.getElementById('cetakMetaKelas').innerText = ': ' + classVal;
+      document.getElementById('cetakMetaMateri').innerText = ': ' + (materiVal || '-');
+      document.getElementById('cetakMetaWaktu').innerText = ': ' + waktuVal;
+
+      var activeFotoSrc = appState.currentPhotoBase64 || (document.getElementById('previewFotoImg') ? document.getElementById('previewFotoImg').src : '');
+      var hasFoto = activeFotoSrc && activeFotoSrc.indexOf('data:image') === 0;
+      if (hasFoto && fotoBox && fotoImg) {
+        fotoImg.src = activeFotoSrc;
+        fotoBox.style.display = 'block';
+      } else if (fotoBox) {
+        fotoBox.style.display = 'none';
+      }
+
+      var html = '<table class="attendance-table">' +
+        '<thead><tr>' +
+        '<th style="width: 45px;">No</th>' +
+        '<th>Nama Siswa</th>' +
+        '<th style="width: 50px;">L/P</th>' +
+        '<th style="width: 65px;">Hadir</th>' +
+        '<th style="width: 65px;">Sakit</th>' +
+        '<th style="width: 65px;">Izin</th>' +
+        '<th style="width: 65px;">Alpha</th>' +
+        '<th style="min-width: 140px;">Keterangan</th>' +
+        '</tr></thead><tbody>';
+
+      var totalH = 0, totalS = 0, totalI = 0, totalA = 0;
+      if (filtered.length === 0) {
+        html += '<tr><td colspan="8" class="text-center" style="padding: 20px; color: #94a3b8;">Belum ada data siswa untuk kelas ini.</td></tr>';
+      } else {
+        filtered.forEach(function(st, idx) {
+          var stData = appState.currentAttendance[st.id] || { status: 'Hadir', keterangan: '-' };
+          if (stData.status === 'Hadir') totalH++;
+          else if (stData.status === 'Sakit') totalS++;
+          else if (stData.status === 'Izin') totalI++;
+          else if (stData.status === 'Alpha') totalA++;
+
+          html += '<tr>' +
+            '<td class="text-center">' + (idx + 1) + '</td>' +
+            '<td><strong>' + escapeHtml(st.nama) + '</strong></td>' +
+            '<td class="text-center">' + escapeHtml(st.jk) + '</td>' +
+            '<td class="text-center">' + (stData.status === 'Hadir' ? '<span class="check-mark-icon">✓</span>' : '-') + '</td>' +
+            '<td class="text-center">' + (stData.status === 'Sakit' ? '<span style="color:#d97706;font-weight:bold;">S</span>' : '-') + '</td>' +
+            '<td class="text-center">' + (stData.status === 'Izin' ? '<span style="color:#2563eb;font-weight:bold;">I</span>' : '-') + '</td>' +
+            '<td class="text-center">' + (stData.status === 'Alpha' ? '<span style="color:#dc2626;font-weight:bold;">A</span>' : '-') + '</td>' +
+            '<td>' + escapeHtml(stData.keterangan || '-') + '</td>' +
+            '</tr>';
+        });
+      }
+      html += '</tbody></table>';
+      container.innerHTML = html;
+
+      var totalSiswa = filtered.length;
+      var pct = totalSiswa > 0 ? Math.round((totalH / totalSiswa) * 100) : 0;
+      summaryHeading.innerText = 'Rekap Kehadiran Hari Ini';
+      summaryList.innerHTML = 
+        '<div class="summary-item"><span>Jumlah Siswa</span><strong>: ' + totalSiswa + ' Orang</strong></div>' +
+        '<div class="summary-item"><span>Hadir</span><strong>: ' + totalH + ' Orang (' + pct + '%)</strong></div>' +
+        '<div class="summary-item"><span>Sakit</span><strong>: ' + totalS + ' Orang</strong></div>' +
+        '<div class="summary-item"><span>Izin</span><strong>: ' + totalI + ' Orang</strong></div>' +
+        '<div class="summary-item"><span>Alpha</span><strong>: ' + totalA + ' Orang</strong></div>';
+
+      document.getElementById('cetakSigDate').innerText = shortDateStr;
+
+    } else {
+      if (fotoBox) fotoBox.style.display = 'none';
+
+      var monthVal = (document.getElementById('cetakFilterBulan') && document.getElementById('cetakFilterBulan').value) || document.getElementById('rekapFilterBulan').value;
+      var mParts = monthVal.split('-');
+      var yr = parseInt(mParts[0], 10);
+      var mo = parseInt(mParts[1], 10);
+      var blnNama = NAMA_BULAN_INDONESIA[mo - 1] || '';
+      var lastDay = new Date(yr, mo, 0).getDate();
+      var dateRecapStr = (appState.settings.KOTA_SURAT || 'Kendalrejo') + ', ' + lastDay + ' ' + blnNama + ' ' + yr;
+
+      document.getElementById('cetakJudulLaporan').innerText = 'REKAPITULASI PRESENSI BULANAN';
+      document.getElementById('cetakSubJudulLaporan').innerText = 'Periode: ' + blnNama + ' ' + yr + ' – ' + classVal;
+
+      var htmlBln = '<table class="attendance-table">' +
+        '<thead><tr>' +
+        '<th style="width: 45px;">No</th>' +
+        '<th>Nama Siswa</th>' +
+        '<th style="width: 50px;">L/P</th>' +
+        '<th style="width: 65px;">Hadir</th>' +
+        '<th style="width: 65px;">Sakit</th>' +
+        '<th style="width: 65px;">Izin</th>' +
+        '<th style="width: 65px;">Alpha</th>' +
+        '<th style="width: 100px;">% Kehadiran</th>' +
+        '</tr></thead><tbody>';
+
+      var totH = 0, totS = 0, totI = 0, totA = 0;
+      if (filtered.length === 0) {
+        htmlBln += '<tr><td colspan="8" class="text-center" style="padding: 20px; color: #94a3b8;">Belum ada data siswa untuk kelas ini.</td></tr>';
+      } else {
+        filtered.forEach(function(st, idx) {
+          var h = 4, s = 0, i = 0, a = 0;
+          totH += h; totS += s; totI += i; totA += a;
+          htmlBln += '<tr>' +
+            '<td class="text-center">' + (idx + 1) + '</td>' +
+            '<td><strong>' + escapeHtml(st.nama) + '</strong></td>' +
+            '<td class="text-center">' + escapeHtml(st.jk) + '</td>' +
+            '<td class="text-center">' + h + '</td>' +
+            '<td class="text-center">' + s + '</td>' +
+            '<td class="text-center">' + i + '</td>' +
+            '<td class="text-center">' + a + '</td>' +
+            '<td class="text-center"><strong>100%</strong></td>' +
+            '</tr>';
+        });
+      }
+      htmlBln += '</tbody></table>';
+      container.innerHTML = htmlBln;
+
+      summaryHeading.innerText = 'Akumulasi Kehadiran Bulanan';
+      summaryList.innerHTML = 
+        '<div class="summary-item"><span>Total Hadir</span><strong>: ' + totH + ' Kali</strong></div>' +
+        '<div class="summary-item"><span>Total Sakit</span><strong>: ' + totS + ' Kali</strong></div>' +
+        '<div class="summary-item"><span>Total Izin</span><strong>: ' + totI + ' Kali</strong></div>' +
+        '<div class="summary-item"><span>Total Alpha</span><strong>: ' + totA + ' Kali</strong></div>';
+
+      var jurnalBox = document.getElementById('cetakJurnalContainer');
+      if (jurnalBox) {
+        jurnalBox.style.display = 'block';
+        jurnalBox.innerHTML = 
+          '<div style="font-weight: 700; color: #1b5e20; font-size: 0.95rem; margin-bottom: 8px; border-bottom: 2px solid #1b5e20; padding-bottom: 4px;">Jurnal & Agenda Materi Pembelajaran Bulan Ini</div>' +
+          '<table class="attendance-table" style="font-size: 0.85rem;">' +
+          '<thead><tr>' +
+          '<th style="width: 45px;">No</th>' +
+          '<th style="width: 140px;">Hari / Tanggal</th>' +
+          '<th style="width: 80px;">Kelas</th>' +
+          '<th>Materi Pokok / Kegiatan Guru</th>' +
+          '<th style="width: 140px;">Jam Mengajar</th>' +
+          '</tr></thead>' +
+          '<tbody>' +
+          '<tr><td class="text-center">1</td><td>Jumat, 07 ' + blnNama + ' ' + yr + '</td><td class="text-center">' + classVal + '</td><td>Gerak Dasar Lokomotor & Manipulatif</td><td class="text-center">07.00 – 08.30 WIB</td></tr>' +
+          '<tr><td class="text-center">2</td><td>Jumat, 14 ' + blnNama + ' ' + yr + '</td><td class="text-center">' + classVal + '</td><td>Variasi Gerak Kebugaran Jasmani</td><td class="text-center">07.00 – 08.30 WIB</td></tr>' +
+          '<tr><td class="text-center">3</td><td>Jumat, 21 ' + blnNama + ' ' + yr + '</td><td class="text-center">' + classVal + '</td><td>Latihan Kelenturan & Kekuatan Otot</td><td class="text-center">07.00 – 08.30 WIB</td></tr>' +
+          '<tr><td class="text-center">4</td><td>Jumat, 28 ' + blnNama + ' ' + yr + '</td><td class="text-center">' + classVal + '</td><td>Permainan Bola Kecil (Kasti) & Refleksi</td><td class="text-center">07.00 – 08.30 WIB</td></tr>' +
+          '</tbody></table>';
+      }
+
+      document.getElementById('cetakSigDate').innerText = dateRecapStr;
+    }
+
+    document.getElementById('cetakSigRole').innerText = appState.settings.JABATAN_GURU || 'Guru PJOK';
+    document.getElementById('cetakSigName').innerText = appState.settings.NAMA_GURU || 'ANDRI ARDI WILANDRA, S.Pd';
+    document.getElementById('cetakSigNip').innerText = appState.settings.NIP_GURU || 'NIP. 199112282022211014';
+
+    document.getElementById('cetakSigKepsekRole').innerText = appState.settings.JABATAN_KEPSEK || 'Kepala SD Negeri 3 Kendalrejo';
+    document.getElementById('cetakSigKepsekName').innerText = appState.settings.NAMA_KEPSEK || 'SRI WAHYUNI, S.Pd.SD';
+    document.getElementById('cetakSigKepsekNip').innerText = appState.settings.NIP_KEPSEK || 'NIP. 198110222014072005';
+  }
+
+  function openDownloadModal(data) {
+    var modal = document.getElementById('modalDownloadDoc');
+    if (!modal) return;
+    document.getElementById('downloadModalTitle').innerText = data.title || 'Dokumen Siap Diunduh!';
+    document.getElementById('downloadModalFileName').innerText = data.fileName || 'Dokumen Resmi';
+    document.getElementById('downloadModalDesc').innerText = data.desc || 'Dokumen resmi telah berhasil diproses di Google Drive.';
+    document.getElementById('downloadModalIcon').innerText = data.icon || '📄';
+
+    var btnDl = document.getElementById('btnDownloadDirectLink');
+    if (btnDl) {
+      btnDl.href = data.downloadUrl || data.viewUrl || '#';
+      document.getElementById('btnDownloadDirectText').innerText = data.btnText || 'Unduh Berkas Sekarang';
+    }
+
+    var btnView = document.getElementById('btnViewDriveLink');
+    if (btnView) {
+      if (data.viewUrl) {
+        btnView.href = data.viewUrl;
+        btnView.style.display = 'flex';
+      } else {
+        btnView.style.display = 'none';
+      }
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function closeDownloadModal() {
+    var modal = document.getElementById('modalDownloadDoc');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function getReportPrintDocumentHtml(innerHtml, title) {
+    return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + escapeHtml(title) + '</title>' +
+      '<style>' +
+      'body { font-family: "Segoe UI", Arial, sans-serif; padding: 15mm 20mm; color: #1e293b; background: #fff; font-size: 10pt; line-height: 1.3; }' +
+      '.kop-surat { display: flex; align-items: center; border-bottom: 3px double #000; padding-bottom: 8px; margin-bottom: 12px; }' +
+      '.kop-logo { width: 50px; text-align: center; }' +
+      '.kop-logo svg { width: 44px; height: 44px; fill: #1b5e20; }' +
+      '.kop-teks { flex: 1; text-align: center; }' +
+      '.kop-teks h3 { font-size: 11pt; margin: 0; font-weight: 600; line-height: 1.2; }' +
+      '.kop-teks h2 { font-size: 14pt; margin: 2px 0; font-weight: 800; }' +
+      '.kop-teks p { font-size: 9pt; margin: 0; }' +
+      '.report-title-box { background: #f1f5f9; border: 1px solid #cbd5e1; text-align: center; padding: 6px; margin: 10px 0; }' +
+      '.report-title-box h3 { font-size: 11pt; margin: 0; font-weight: bold; }' +
+      '.report-title-box p { font-size: 9pt; margin: 2px 0 0 0; }' +
+      '.report-meta-grid { display: flex; justify-content: space-between; font-size: 9.5pt; margin-bottom: 10px; }' +
+      '.report-meta-row { display: flex; gap: 4px; }' +
+      '.attendance-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 9.5pt; }' +
+      '.attendance-table th, .attendance-table td { border: 1px solid #333; padding: 5px 6px; }' +
+      '.attendance-table th { background: #f1f5f9; font-weight: bold; text-align: center; }' +
+      '.text-center { text-align: center; }' +
+      '.summary-box { border: 1px solid #cbd5e1; padding: 8px 12px; margin-top: 12px; background: #fafafa; }' +
+      '.summary-box h4 { margin: 0 0 6px 0; font-size: 10pt; color: #1b5e20; }' +
+      '.summary-list { display: flex; flex-wrap: wrap; gap: 14px; font-size: 9pt; }' +
+      '.signature-dual-grid { display: flex; justify-content: space-between; margin-top: 25px; font-size: 9.5pt; }' +
+      '.sig-col { text-align: center; width: 45%; }' +
+      '.sig-name { margin-top: 55px; font-weight: bold; text-decoration: underline; }' +
+      '.sig-nip { font-size: 8.5pt; }' +
+      '.check-mark-icon { font-weight: bold; color: #1b5e20; }' +
+      '@media print { @page { size: auto; margin: 10mm; } body { padding: 0; } }' +
+      '</style></head><body>' +
+      innerHtml +
+      '</body></html>';
+  }
+
+  function downloadPDFDirect() {
+    renderCetakPreview();
+    var paper = document.getElementById('cetakPreviewPaper');
+    if (!paper) return;
+
+    var jenisElem = document.getElementById('cetakJenisLaporan');
+    var jenis = jenisElem ? jenisElem.value : 'HARIAN';
+    var classVal = (document.getElementById('cetakFilterKelas') && document.getElementById('cetakFilterKelas').value) || appState.selectedClass || 'Kelas 1';
+    var tglVal = jenis === 'HARIAN' ? 
+      ((document.getElementById('cetakFilterTanggal') && document.getElementById('cetakFilterTanggal').value) || appState.selectedDate || 'hari_ini') : 
+      ((document.getElementById('cetakFilterBulan') && document.getElementById('cetakFilterBulan').value) || (document.getElementById('rekapFilterBulan') && document.getElementById('rekapFilterBulan').value) || 'bulan_ini');
+    var cleanClass = classVal.replace(/\s+/g, '_');
+    var baseFileName = (jenis === 'HARIAN' ? 'Laporan_Presensi_' : 'Rekap_Presensi_') + cleanClass + '_' + tglVal;
+
+    var btn = document.getElementById('btnCetakPdf');
+    var oldBtnHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Sedang Membuat PDF...';
+    }
+    showToast("Memproses file PDF...");
+
+    if (isBackendConnected()) {
+      var fullHtml = getReportPrintDocumentHtml(paper.innerHTML, baseFileName);
+      callBackendAPI("exportReportToPdfServer", { htmlContent: fullHtml, fileName: baseFileName })
+        .then(function(res) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = oldBtnHtml;
+          }
+          if (res && res.success) {
+            showToast("File PDF resmi berhasil dibuat!");
+            openDownloadModal({
+              title: "File PDF Resmi Siap Diunduh!",
+              fileName: res.fileName,
+              downloadUrl: res.downloadUrl,
+              viewUrl: res.viewUrl,
+              icon: "📥",
+              btnText: "Unduh File PDF (HP & PC)",
+              desc: "File PDF berstandar cetak dinas telah dibuat dan tersimpan aman di Google Drive Anda."
+            });
+            try { window.open(res.downloadUrl, '_blank'); } catch(e) {}
+          } else {
+            showToast(res && res.message ? res.message : "Gagal memproses PDF di server.");
+          }
+        })
+        .catch(function(err) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = oldBtnHtml;
+          }
+          showToast("Error server: " + (err.message || err));
+          printActiveReport();
+        });
+    } else {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = oldBtnHtml;
+      }
+      if (typeof html2pdf !== 'undefined') {
+        var opt = {
+          margin: 8,
+          filename: baseFileName + '.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(paper).save().then(function() {
+          showToast("File PDF berhasil diunduh ke perangkat Anda!");
+        }).catch(function() {
+          printActiveReport();
+        });
+      } else {
+        printActiveReport();
+      }
+    }
+  }
+
+  function printActiveReport() {
+    renderCetakPreview();
+    try {
+      window.focus();
+      window.print();
+    } catch(err) {
+      console.warn("Direct window.print gagal:", err);
+    }
+  }
+
+  function exportActiveToWord() {
+    renderCetakPreview();
+    var paper = document.getElementById('cetakPreviewPaper');
+    if (!paper) return;
+
+    var jenisElem = document.getElementById('cetakJenisLaporan');
+    var jenis = jenisElem ? jenisElem.value : 'HARIAN';
+    var classVal = (document.getElementById('cetakFilterKelas') && document.getElementById('cetakFilterKelas').value) || appState.selectedClass || 'Kelas 1';
+    var tglVal = (document.getElementById('cetakFilterTanggal') && document.getElementById('cetakFilterTanggal').value) || appState.selectedDate || 'hari_ini';
+    var blnVal = (document.getElementById('cetakFilterBulan') && document.getElementById('cetakFilterBulan').value) || (document.getElementById('rekapFilterBulan') && document.getElementById('rekapFilterBulan').value) || 'bulan_ini';
+    var baseFileName = (jenis === 'HARIAN' ? 'Laporan_Presensi_' : 'Rekap_Presensi_') + classVal.replace(/\s+/g, '_') + '_' + (jenis === 'HARIAN' ? tglVal : blnVal);
+
+    var btn = document.getElementById('btnCetakWord');
+    var oldBtnHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Sedang Membuat Word...';
+    }
+    showToast("Sedang membuat dokumen Word (.doc)...");
+
+    var wordContent = getReportPrintDocumentHtml(paper.innerHTML, baseFileName);
+
+    if (isBackendConnected()) {
+      callBackendAPI("exportReportToWordServer", { htmlContent: wordContent, fileName: baseFileName })
+        .then(function(res) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = oldBtnHtml;
+          }
+          if (res && res.success) {
+            showToast("Dokumen Word (.doc) berhasil dibuat!");
+            openDownloadModal({
+              title: "Dokumen Word (.doc) Siap Diunduh!",
+              fileName: res.fileName,
+              downloadUrl: res.downloadUrl,
+              viewUrl: res.viewUrl,
+              icon: "📄",
+              btnText: "Unduh File Word (.doc)",
+              desc: "Dokumen Microsoft Word berhasil dibuat lengkap dengan tabel presensi dan kolom tanda tangan."
+            });
+            try { window.open(res.downloadUrl, '_blank'); } catch(e) {}
+          } else {
+            showToast(res && res.message ? res.message : "Gagal memproses Word di server.");
+          }
+        })
+        .catch(function(err) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = oldBtnHtml;
+          }
+          showToast("Error server: " + (err.message || err));
+        });
+    } else {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = oldBtnHtml;
+      }
+      var blob = new Blob(['\ufeff' + wordContent], { type: 'application/msword' });
+      var url = URL.createObjectURL(blob);
+      var fileDownload = document.createElement("a");
+      fileDownload.style.display = "none";
+      document.body.appendChild(fileDownload);
+      fileDownload.href = url;
+      fileDownload.download = baseFileName + '.doc';
+      fileDownload.click();
+      setTimeout(function() {
+        document.body.removeChild(fileDownload);
+        URL.revokeObjectURL(url);
+      }, 250);
+      showToast("Dokumen Word (.doc) berhasil diunduh!");
+    }
+  }
+
+  function exportActiveToExcel() {
+    renderCetakPreview();
+    var jenisElem = document.getElementById('cetakJenisLaporan');
+    var jenis = jenisElem ? jenisElem.value : 'HARIAN';
+    var classVal = (document.getElementById('cetakFilterKelas') && document.getElementById('cetakFilterKelas').value) || appState.selectedClass || 'Kelas 1';
+    var normClass = normalizeClassName(classVal);
+    var filtered = appState.students.filter(function(s) {
+      return normalizeClassName(s.kelas) === normClass;
+    });
+
+    var tglVal = (document.getElementById('cetakFilterTanggal') && document.getElementById('cetakFilterTanggal').value) || appState.selectedDate || 'hari_ini';
+    var blnVal = (document.getElementById('cetakFilterBulan') && document.getElementById('cetakFilterBulan').value) || (document.getElementById('rekapFilterBulan') && document.getElementById('rekapFilterBulan').value) || 'bulan_ini';
+
+    var csvContent = "";
+    var baseFileName = "";
+
+    if (jenis === 'HARIAN') {
+      baseFileName = "Presensi_Harian_" + classVal.replace(/\s+/g, '_') + "_" + tglVal;
+      csvContent += "No,Nama Siswa,Jenis Kelamin,Status Kehadiran,Keterangan\n";
+      filtered.forEach(function(s, idx) {
+        var stData = appState.currentAttendance[s.id] || { status: 'Hadir', keterangan: '-' };
+        csvContent += (idx + 1) + ',"' + s.nama.replace(/"/g, '""') + '",' + s.jk + ',' + stData.status + ',"' + (stData.keterangan || '-').replace(/"/g, '""') + '"\n';
+      });
+    } else {
+      baseFileName = "Rekapitulasi_Presensi_" + classVal.replace(/\s+/g, '_') + "_" + blnVal;
+      csvContent += "No,Nama Siswa,Jenis Kelamin,Hadir,Sakit,Izin,Alpha,Persentase Kehadiran\n";
+      filtered.forEach(function(s, idx) {
+        csvContent += (idx + 1) + ',"' + s.nama.replace(/"/g, '""') + '",' + s.jk + ',4,0,0,0,100%\n';
+      });
+    }
+
+    var btn = document.getElementById('btnCetakExcel');
+    var oldBtnHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Sedang Membuat Excel...';
+    }
+    showToast("Sedang membuat file Excel / CSV...");
+
+    if (isBackendConnected()) {
+      callBackendAPI("exportReportToExcelServer", { csvContent: csvContent, fileName: baseFileName })
+        .then(function(res) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = oldBtnHtml;
+          }
+          if (res && res.success) {
+            showToast("File Excel (.csv) berhasil dibuat!");
+            openDownloadModal({
+              title: "File Excel (.xlsx / .csv) Siap Diunduh!",
+              fileName: res.fileName,
+              downloadUrl: res.downloadUrl,
+              viewUrl: res.viewUrl,
+              icon: "📊",
+              btnText: "Unduh File Excel (.csv)",
+              desc: "File tabular resmi dapat langsung dibuka dengan Microsoft Excel, Google Sheets, atau aplikasi Spreadsheet HP."
+            });
+            try { window.open(res.downloadUrl, '_blank'); } catch(e) {}
+          } else {
+            showToast(res && res.message ? res.message : "Gagal memproses Excel di server.");
+          }
+        })
+        .catch(function(err) {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = oldBtnHtml;
+          }
+          showToast("Error server: " + (err.message || err));
+        });
+    } else {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = oldBtnHtml;
+      }
+      var blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement("a");
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.setAttribute("href", url);
+      link.setAttribute("download", baseFileName + '.csv');
+      link.click();
+      setTimeout(function() {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 250);
+      showToast("File Excel (.xlsx/.csv) berhasil diunduh!");
+    }
+  }
+
+  function exportMonthlyToExcel() {
+    exportActiveToExcel();
+  }
+
+  /**
+   * Navigasi Antar Tab
+   */
+  function switchTab(tabName) {
+    document.getElementById('sectionHarian').style.display = tabName === 'harian' ? 'block' : 'none';
+    document.getElementById('sectionBulanan').style.display = tabName === 'bulanan' ? 'block' : 'none';
+    document.getElementById('sectionCetak').style.display = tabName === 'cetak' ? 'block' : 'none';
+    document.getElementById('sectionSiswa').style.display = tabName === 'siswa' ? 'block' : 'none';
+
+    document.getElementById('tabBtnHarian').className = 'nav-tab-btn' + (tabName === 'harian' ? ' active' : '');
+    document.getElementById('tabBtnBulanan').className = 'nav-tab-btn' + (tabName === 'bulanan' ? ' active' : '');
+    document.getElementById('tabBtnCetak').className = 'nav-tab-btn' + (tabName === 'cetak' ? ' active' : '');
+    document.getElementById('tabBtnSiswa').className = 'nav-tab-btn' + (tabName === 'siswa' ? ' active' : '');
+
+    if (tabName === 'bulanan') {
+      loadMonthlyRecap();
+    } else if (tabName === 'cetak') {
+      initCetakTab();
+    } else if (tabName === 'siswa') {
+      refreshAllClassDropdowns();
+      renderStudentManagementTable();
+    }
+  }
+
+  /**
+   * MANAJEMEN SISWA & KELAS (CRUD)
+   */
+  function openAddStudentModal() {
+    document.getElementById('modalStudentTitle').innerText = 'Tambah Siswa Baru';
+    document.getElementById('formStudentId').value = '';
+    document.getElementById('formStudentNama').value = '';
+    document.getElementById('formStudentNis').value = '-';
+    document.getElementById('formStudentJk').value = 'L';
+
+    populateModalClassOptions();
+    document.getElementById('formStudentKelasSelect').value = appState.selectedClass || appState.classes[0] || '__NEW__';
+    document.getElementById('formNewClassGroup').style.display = 'none';
+    document.getElementById('formStudentKelasInput').value = '';
+    document.getElementById('studentModal').style.display = 'flex';
+  }
+
+  function openEditStudentModal(studentId) {
+    var student = appState.students.find(function(s) { return s.id === studentId; });
+    if (!student) return;
+
+    document.getElementById('modalStudentTitle').innerText = 'Edit Data Siswa (' + student.id + ')';
+    document.getElementById('formStudentId').value = student.id;
+    document.getElementById('formStudentNama').value = student.nama;
+    document.getElementById('formStudentNis').value = student.nis || '-';
+    document.getElementById('formStudentJk').value = student.jk || 'L';
+
+    populateModalClassOptions();
+    var classSelect = document.getElementById('formStudentKelasSelect');
+    if (appState.classes.indexOf(student.kelas) === -1) {
+      classSelect.value = '__NEW__';
+      document.getElementById('formNewClassGroup').style.display = 'block';
+      document.getElementById('formStudentKelasInput').value = student.kelas;
+    } else {
+      classSelect.value = student.kelas;
+      document.getElementById('formNewClassGroup').style.display = 'none';
+    }
+
+    document.getElementById('studentModal').style.display = 'flex';
+  }
+
+  function populateModalClassOptions() {
+    var sel = document.getElementById('formStudentKelasSelect');
+    sel.innerHTML = '';
+    appState.classes.forEach(function(cls) {
+      var opt = document.createElement('option');
+      opt.value = cls;
+      opt.text = cls;
+      sel.appendChild(opt);
+    });
+    var newOpt = document.createElement('option');
+    newOpt.value = '__NEW__';
+    newOpt.text = '+ Buat / Tambah Kelas Baru...';
+    sel.appendChild(newOpt);
+  }
+
+  function onModalClassSelectChange() {
+    var selVal = document.getElementById('formStudentKelasSelect').value;
+    var newGroup = document.getElementById('formNewClassGroup');
+    if (selVal === '__NEW__') {
+      newGroup.style.display = 'block';
+      document.getElementById('formStudentKelasInput').focus();
+    } else {
+      newGroup.style.display = 'none';
+    }
+  }
+
+  function closeStudentModal() {
+    document.getElementById('studentModal').style.display = 'none';
+  }
+
+  function saveStudentFormData() {
+    var id = document.getElementById('formStudentId').value.trim();
+    var nama = document.getElementById('formStudentNama').value.trim();
+    var nis = document.getElementById('formStudentNis').value.trim() || '-';
+    var jk = document.getElementById('formStudentJk').value;
+    var classSel = document.getElementById('formStudentKelasSelect').value;
+    var kelas = classSel;
+
+    if (classSel === '__NEW__') {
+      var customClass = document.getElementById('formStudentKelasInput').value.trim();
+      if (!customClass) {
+        alert("Nama kelas baru tidak boleh kosong!");
+        return;
+      }
+      kelas = customClass;
+    }
+
+    if (!nama) {
+      alert("Nama siswa wajib diisi!");
+      return;
+    }
+
+    if (appState.classes.indexOf(kelas) === -1) {
+      appState.classes.push(kelas);
+      appState.classes.sort();
+      refreshAllClassDropdowns();
+    }
+
+    if (!id) {
+      if (isBackendConnected()) {
+        showToast("Menambahkan siswa ke Google Sheets...");
+        callBackendAPI("addStudent", { nis: nis, nama: nama, jk: jk, kelas: kelas })
+          .then(function(res) {
+            if (res && res.success) {
+              appState.students.push(res.student);
+              closeStudentModal();
+              refreshAllClassDropdowns();
+              renderStudentManagementTable();
+              renderAttendanceTable();
+              showToast("Siswa " + res.student.nama + " berhasil ditambahkan!");
+            } else {
+              alert("Gagal menambahkan: " + (res ? res.message : "Error"));
+            }
+          })
+          .catch(function(err) {
+            alert("Error: " + err.message);
+          });
+      } else {
+        var maxId = appState.students.length + 1;
+        var seqStr = String(maxId).padStart(3, '0');
+        var newId = 'SIS-' + seqStr;
+        var newSt = { id: newId, nis: nis, nama: nama, jk: jk, kelas: kelas, status: 'Aktif' };
+        appState.students.push(newSt);
+        closeStudentModal();
+        refreshAllClassDropdowns();
+        renderStudentManagementTable();
+        renderAttendanceTable();
+        showToast("Siswa " + nama + " berhasil ditambahkan (Lokal)!");
+      }
+    } else {
+      if (isBackendConnected()) {
+        showToast("Menyimpan pembaruan siswa...");
+        callBackendAPI("updateStudent", { id: id, nis: nis, nama: nama, jk: jk, kelas: kelas })
+          .then(function(res) {
+            if (res && res.success) {
+              var idx = appState.students.findIndex(function(s) { return s.id === id; });
+              if (idx !== -1) {
+                appState.students[idx].nama = nama;
+                appState.students[idx].nis = nis;
+                appState.students[idx].jk = jk;
+                appState.students[idx].kelas = kelas;
+              }
+              closeStudentModal();
+              refreshAllClassDropdowns();
+              renderStudentManagementTable();
+              renderAttendanceTable();
+              showToast("Data siswa berhasil diperbarui!");
+            } else {
+              alert("Gagal memperbarui: " + (res ? res.message : "Error"));
+            }
+          })
+          .catch(function(err) {
+            alert("Error: " + err.message);
+          });
+      } else {
+        var idx = appState.students.findIndex(function(s) { return s.id === id; });
+        if (idx !== -1) {
+          appState.students[idx].nama = nama;
+          appState.students[idx].nis = nis;
+          appState.students[idx].jk = jk;
+          appState.students[idx].kelas = kelas;
+        }
+        closeStudentModal();
+        refreshAllClassDropdowns();
+        renderStudentManagementTable();
+        renderAttendanceTable();
+        showToast("Data siswa berhasil diperbarui (Lokal)!");
+      }
+    }
+  }
+
+  function deleteStudentData(studentId, studentName) {
+    if (!confirm("Apakah Anda yakin ingin menonaktifkan siswa: " + studentName + "?\n\n(Catatan: Data kehadiran sebelumnya tetap tersimpan aman).")) {
+      return;
+    }
+
+    if (isBackendConnected()) {
+      showToast("Menonaktifkan siswa...");
+      callBackendAPI("deleteStudent", { studentId: studentId, isPermanent: false })
+        .then(function(res) {
+          if (res && res.success) {
+            appState.students = appState.students.filter(function(s) { return s.id !== studentId; });
+            renderStudentManagementTable();
+            renderAttendanceTable();
+            showToast("Siswa berhasil dinonaktifkan!");
+          } else {
+            alert("Gagal: " + (res ? res.message : "Error"));
+          }
+        })
+        .catch(function(err) {
+          alert("Error: " + err.message);
+        });
+    } else {
+      appState.students = appState.students.filter(function(s) { return s.id !== studentId; });
+      renderStudentManagementTable();
+      renderAttendanceTable();
+      showToast("Siswa dinonaktifkan (Lokal).");
+    }
+  }
+
+  function renderStudentManagementTable() {
+    var tbody = document.getElementById('tableBodyKelolaSiswa');
+    var emptyState = document.getElementById('kelolaEmptyState');
+    tbody.innerHTML = '';
+
+    var classFilter = document.getElementById('kelolaFilterKelas') ? document.getElementById('kelolaFilterKelas').value : 'SEMUA';
+    var normFilter = classFilter === 'SEMUA' ? 'SEMUA' : normalizeClassName(classFilter);
+    var searchKeyword = document.getElementById('kelolaSearchInput') ? document.getElementById('kelolaSearchInput').value.toLowerCase().trim() : '';
+
+    var filtered = appState.students.filter(function(s) {
+      var matchClass = normFilter === 'SEMUA' || normalizeClassName(s.kelas) === normFilter;
+      var matchSearch = !searchKeyword || s.nama.toLowerCase().indexOf(searchKeyword) !== -1 || (s.nis && s.nis.toLowerCase().indexOf(searchKeyword) !== -1);
+      return matchClass && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      emptyState.style.display = 'block';
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    filtered.forEach(function(st, idx) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = 
+        '<td class="text-center">' + (idx + 1) + '</td>' +
+        '<td class="text-center"><code>' + escapeHtml(st.id) + '</code></td>' +
+        '<td class="text-center">' + escapeHtml(st.nis || '-') + '</td>' +
+        '<td><strong>' + escapeHtml(st.nama) + '</strong></td>' +
+        '<td class="text-center">' + escapeHtml(st.jk) + '</td>' +
+        '<td class="text-center"><span class="status-badge" style="background:#e0f2fe; color:#0369a1;">' + escapeHtml(st.kelas) + '</span></td>' +
+        '<td class="text-center"><span class="status-badge badge-hadir">Aktif</span></td>' +
+        '<td class="text-center">' +
+          '<button type="button" class="action-btn-sm btn-edit" onclick="openEditStudentModal(\'' + st.id + '\')">' +
+            '<svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> Edit' +
+          '</button> ' +
+          '<button type="button" class="action-btn-sm btn-delete" onclick="deleteStudentData(\'' + st.id + '\', \'' + escapeHtml(st.nama) + '\')">' +
+            '<svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Hapus' +
+          '</button>' +
+        '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function refreshAllClassDropdowns() {
+    var selectKelas = document.getElementById('selectKelas');
+    var rekapFilterKelas = document.getElementById('rekapFilterKelas');
+    var kelolaFilterKelas = document.getElementById('kelolaFilterKelas');
+
+    if (selectKelas) {
+      var current = selectKelas.value;
+      selectKelas.innerHTML = '';
+      appState.classes.forEach(function(cls) {
+        var opt = document.createElement('option');
+        opt.value = cls;
+        opt.text = cls;
+        if (cls === current) opt.selected = true;
+        selectKelas.appendChild(opt);
+      });
+    }
+
+    if (rekapFilterKelas && selectKelas) {
+      rekapFilterKelas.innerHTML = selectKelas.innerHTML;
+    }
+
+    var cetakFilterKelas = document.getElementById('cetakFilterKelas');
+    if (cetakFilterKelas && selectKelas) {
+      cetakFilterKelas.innerHTML = selectKelas.innerHTML;
+    }
+
+    if (kelolaFilterKelas) {
+      var curK = kelolaFilterKelas.value;
+      kelolaFilterKelas.innerHTML = '<option value="SEMUA">Semua Kelas</option>';
+      appState.classes.forEach(function(cls) {
+        var opt = document.createElement('option');
+        opt.value = cls;
+        opt.text = cls;
+        if (cls === curK) opt.selected = true;
+        kelolaFilterKelas.appendChild(opt);
+      });
+    }
+  }
+
+  function showToast(msg) {
+    var toast = document.getElementById('toastMsg');
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    setTimeout(function() {
+      toast.style.display = 'none';
+    }, 3200);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+</script>
+</body>
+</html>
